@@ -1,6 +1,4 @@
-# pylint: disable=anomalous-backslash-in-string
 """MPlay Batch Save Utilities"""
-# TODO: Add verbosity option to env, and do prints/logging
 import errno
 import os
 import re
