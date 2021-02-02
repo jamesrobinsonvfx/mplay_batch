@@ -1,0 +1,21 @@
+{
+    "path": "$MPLAY_BATCH_BUILD_VERSION_DIR",
+    "env": [
+        {
+            "MPLAY_BATCH_INSTALL_DIR": "$HOME/dev/mplay_batch"
+        },
+        {
+            "MPLAY_BATCH_BUILD_VERSION_DIR": [
+                {
+                    "houdini_version>='18.5' and houdini_version < '19.0'": "$MPLAY_BATCH_INSTALL_DIR/houdini18.5"
+                }
+            ]
+        },
+        {
+            "PYTHONPATH": {
+                "value": "$MPLAY_BATCH_BUILD_VERSION_DIR/python2.7libs",
+                "method": "append"
+            }
+        }
+    ]
+}
