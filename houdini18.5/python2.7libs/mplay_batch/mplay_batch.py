@@ -1,6 +1,6 @@
 # pylint: disable=anomalous-backslash-in-string
-# TODO: Add verbosity option to env, and do prints/logging
 """MPlay Batch Save Utilities"""
+# TODO: Add verbosity option to env, and do prints/logging
 import errno
 import os
 import re
@@ -303,7 +303,6 @@ class SequenceWriter(object):
         """Save the currently selected sequence to disk."""
         seq = Sequence(self.location)
         self.cmds.append("imgsave -a {0}".format(seq.path))
-        print seq
         return self
 
     def save_all_seqs(self):
@@ -313,8 +312,6 @@ class SequenceWriter(object):
             seq = Sequence(self.location, index=i)
             self.cmds.append(
                 "imgsave -s {0} -a {1}".format(seq_name, seq.path))
-            print seq
-
         return self
 
     def save_all_viewers(self):
