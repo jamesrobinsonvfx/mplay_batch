@@ -2,7 +2,7 @@
     "path": "$MPLAY_BATCH_BUILD_VERSION_DIR",
     "env": [
         {
-            "MPLAY_BATCH_INSTALL_DIR": "$HOME/dev/mplay_batch"
+            "MPLAY_BATCH_INSTALL_DIR": "$HOUDINI_PACKAGE_PATH/mplay_batch"
         },
         {
             "MPLAY_BATCH_BUILD_VERSION_DIR": [
