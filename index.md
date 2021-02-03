@@ -4,6 +4,29 @@ Menu add-on for MPlay to quickly batch write sequences.
 
 ![MPlay Batch Menu](/assets/menu.png)
 
+## Quick Installation
+
+1. Download
+2. Copy the entire folder to `$HOUDINI_USER_PREF_DIR/packages`
+3. Copy `mplay_batch.json` to `$HOUDINI_USER_PREF_DIR/packages`
+
+And you're all set!
+
+# Overview
+* [Features](#Features)
+	* [Save Current Sequence](#Save-Current-Sequence)
+	* [Save All Sequences](#Save-All-Sequences)
+	* [Open Flipbook Directory](#Open-Flipbook-Directory)
+	* [Example: Naming](#Example:-Naming)
+* [Installation](#Installation)
+* [Customization](#Customization)
+	* [Defaults](#Defaults)
+	* [Custom Variables $JOB, $HIP, etc](#Custom-Variables-$JOB,-$HIP,-etc)
+	* [Example: Use a built-in Houdini Variable](#Example:-Use-a-built-in-Houdini-Variable)
+	* [Example: Editing the Package File](#Example:-Editing-the-Package-File)
+* [Notes](#Notes)
+* [Future](#Future)
+
 # Features
 ### Save Current Sequence
 
@@ -31,7 +54,7 @@ By default, each sequence is saved like this:
 
 ![Naming Breakdown](/assets/name_breakdown.png)
 
-### Example:
+### Example: Naming
 
 So if you're working in a hipfile called `myproj_sickexplosion_v002.hip`, and you ran _Save Current Sequence_ for the first time, it would be saved as:
 
@@ -45,17 +68,11 @@ Each time you run _Save Current Sequence_, a new `SUB_VERSION` folder is created
 
 When running _Save All Sequences_, all sequences loaded in memory are written to disk inside of a single `SUB_VERSION` folder. Each sequence has a unique `SEQUENCE_INDEX` suffix appended to it. In general, they _should_ write to disk in the same order they were written, however this is not guaranteed.
 
-![Multiple Sequence Save Result](/assets/multi_sequence.png)
+![Multiple Sequence Save Result](/assets/multi_sequence_scroll.png)
 
 
 
 # Installation
-
-## Quick Installation
-1. Download
-2. Copy the entire folder to `$HOUDINI_USER_PREF_DIR/packages`
-3. Copy `mplay_batch.json` to `$HOUDINI_USER_PREF_DIR/packages`
-   And you're all set!
 
 Installation is easy using [Houdini Packages](link).
 
@@ -63,6 +80,7 @@ You can copy this entire folder to anywhere that packages are scanned for. Easie
 
 If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATCH_INSTALL_DIR` key to something else, ie `"$HOME/dev/mplay_batch` or `"C:/Users/James/houdini_tools/mplay_batch"`. Just make sure that the `mplay_batch.json` file still lives in a packages folder that Houdini will scan.
 
+[Back to top](#Overview)
 
 # Customization
 
@@ -83,14 +101,14 @@ There are a few parameters that can be customized via environment variables. The
 
 To use custom variables in the file pattern for `MPLAY_BATCH_FLIPBOOK_DIR`, just wrap it in `__` instead of starting with `$`.
 
-Example:
+### Example: Use a built-in Houdini Variable
 
 Use `$HIP/flipbooks` as the default saving location:
 
 `"__HIP__/flipbooks"`
 
 
-## Examples
+### Example: Editing the Package File
 
 Here are some examples you can add to the `env` key in the package file:
 
@@ -112,6 +130,8 @@ Here are some examples you can add to the `env` key in the package file:
 }
 ```
 
+[Back to top](#Overview)
+
 # Notes
 
 * Scripting for MPlay is a bit limited at the moment, as there is no HOM interface. Everything gets scripted with HScript, and there is no access to `hou.ui` when running MPlay. If this is ever addressed, I'll be sure to modify the code to be a bit sleeker, and have some more options!
@@ -120,8 +140,12 @@ Here are some examples you can add to the `env` key in the package file:
 
 * The entire frame range will be written for each sequence
 
+[Back to top](#Overview)
+
 # Future
 
 * Could make naming more customizable
 * __Save All Viewers__ option if I can figure out why only one viewer is listed when several are open!
 * Verbosity, prints, logging
+
+[Back to top](#Overview)
