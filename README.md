@@ -1,32 +1,20 @@
 # MPlay Batch
 Menu add-on for MPlay to quickly batch write sequences.
 
-[Add some pictures and gifs and stuff] [Maybe try a gh-pages]
-
-By default, each sequence is saved like this:
-
-`{FLIPBOOK_DIR}/{HIPNAME}_{SUB_VERSION}/{HIPNAME}_{SUB_VERSION}_{SEQUENCE_INDEX}.$F.{EXT}`
-
-## Some example paths:
-
-[Add these]
-
-# Installation
-Installing is easy using [Houdini Packages](https://www.sidefx.com/docs/houdini/ref/plugins.html).
-
-You can copy this entire folder to anywhere that packages are scanned for.
-Easiest is probably in your `HOUDINI_USER_PREF_DIR/packages` folder. Once you've moved
-it there, just copy/move the package file `mplay_batch.json` directly into `HOUDINI_USER_PREF_DIR/packages`.
-The package is setup by default for this configuration.
-
-If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATCH_INSTALL_DIR` key to something else, ie
-`"$HOME/dev/mplay_batch"` or `"C:/Users/James/houdini_tools/mplay_batch"`. Just make sure that the `mplay_batch.json` file still lives in that `packages` folder.
+For more info, see the [MPlay Batch GitHub Page](https://jamesrobinsonvfx.github.io/mplay_batch/)
 
 ## Quick Installation
 
-1. Download
-2. Copy entire folder to `$HOUDINI_USER_PREF_DIR/packages`
-3. Copy `mplay_batch.json` to `$HOUDINI_USER_PREF_DIR/packages`
+### Option 1: Using Git
+
+1. Navigate to where you want to put the package (probably `$HOUDINI_USER_PREF_DIR/packages`)
+2. From a bash or git-bash shell, run `git clone https://github.com/jamesrobinsonvfx/mplay_batch.git`
+3. Copy `mplay_batch/mplay_batch.json` to the same `packages` directory. (again, probably `$HOUDINI_USER_PREF_DIR/packages`)
+
+### Option 2: Download Zip
+1. Download the latest [.zip](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest/download/mplay_batch.zip) or [.tar.gz](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest/download/mplay_batch.tar.gz) from the [Releases Page](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest)
+2. Extract the contents to `$HOUDINI_USER_PREF_DIR/packages/mplay_batch`
+3. Copy `mplay_batch/mplay_batch.json` to `$HOUDINI_USER_PREF_DIR/packages`
 
     And you're all set!
 
@@ -69,16 +57,3 @@ Here are some examples you can add to the `env` key in the package file.
     "MPLAY_BATCH_PAD_SUB_VERSION": "4"
 }
 ```
-
-# Notes
-* Scripting for MPlay is a bit limited at the moment, as there is no official HOM interface. Everything gets scripted with HScript, and there is no access to `hou.ui` when running MPlay.
-If this is ever addressed, I'll be sure to modify the code to be a bit sleeker and have some more options!
-
-* The `mplay_batch` package location must be appended to `PYTHONPATH` for this plugin to be picked up by MPlay. Modifying `HOUDINI_PATH` and having a `python2.7libs` directory alone is not enough (that's why it's there explicitly in the package definition).
-
-* The entire frame range will be written for each sequence.
-
-# Future
-* Could make naming more customizable
-* __Save All Viewers__ option if I can figure out why only 1 viewer is listed when several are open!
-* Verbosity, prints, logging.
