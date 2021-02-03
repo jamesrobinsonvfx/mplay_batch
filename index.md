@@ -99,9 +99,9 @@ When running _Save All Sequences_, all sequences loaded in memory are written to
 
 Installation is easy using [Houdini Packages](https://www.sidefx.com/docs/houdini/ref/plugins.html).
 
-You can copy this entire folder to anywhere that packages are scanned for. Easiest is probably in you `HOUDINI_USER_PREF_DIR/packages` folder. Once you've moved it there, just copy/move the package file `mplay_batch.json` directly into `HOUDINI_USER_PREF_DIR/packages`. The package is set up by default for this configuration.
+You can copy this entire folder to anywhere that packages are scanned for. Easiest is probably in your `HOUDINI_USER_PREF_DIR/packages` folder. Once you've moved it there, just copy/move the package file `mplay_batch.json` directly into `HOUDINI_USER_PREF_DIR/packages`. The package is set up by default for this configuration.
 
-If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATCH_INSTALL_DIR` key to something else, ie `"$HOME/dev/mplay_batch` or `"C:/Users/James/houdini_tools/mplay_batch"`. Just make sure that the `mplay_batch.json` file still lives in a packages folder that Houdini will scan.
+If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATCH_INSTALL_DIR` key to something else, ie `"$HOME/dev/mplay_batch"` or `"C:/Users/James/houdini_tools/mplay_batch"`. Just make sure that the `mplay_batch.json` file still lives in a packages folder that Houdini will scan.
 
 [Back to top](#overview)
 
@@ -118,7 +118,9 @@ There are a few parameters that can be customized via environment variables. The
 | `MPLAY_BATCH_PAD_SUB_VERSION` | `3`         | Zero Padding to add to the "Sub-version" suffix |
 | `MPLAY_BATCH_PAD_SEQ_INDEX`   | `0`         | Zero Padding to add to each sequence's suffix   |
 
-<sup>1</sup> *This directory __must__ exist. It will not be created automatically!*
+<sup>1</sup> *This directory __must__ exist. It will not be created
+automatically!* `$JOB/flip` is the default naming when creating a project using
+Houdini's built-in `File > New Project` dialog.
 
 ## Custom Variables, `$JOB`, `$HIP`, etc. ##
 
