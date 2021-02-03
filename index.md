@@ -1,4 +1,4 @@
-# MPlay Batch #
+# MPlay Batch
 
 Menu add-on for MPlay to quickly batch write sequences.
 
@@ -13,34 +13,38 @@ Menu add-on for MPlay to quickly batch write sequences.
 And you're all set!
 
 # Overview #
-* [Features](#Features)
-	* [Save Current Sequence](#Save-Current-Sequence)
-	* [Save All Sequences](#Save-All-Sequences)
-	* [Open Flipbook Directory](#Open-Flipbook-Directory)
-	* [Example: Naming](#Example:-Naming)
-* [Installation](#Installation)
-* [Customization](#Customization)
-	* [Defaults](#Defaults)
-	* [Custom Variables $JOB, $HIP, etc.](#Custom-Variables-$JOB,-$HIP,-etc)
-	* [Example: Use a built-in Houdini Variable](#Example:-Use-a-built-in-Houdini-Variable)
-	* [Example: Editing the Package File](#Example:-Editing-the-Package-File)
-* [Notes](#Notes)
-* [Future](#Future)
+- [MPlay Batch](#mplay-batch)
+	- [Quick Installation](#quick-installation)
+- [Overview](#overview)
+- [Features](#features)
+	- [Save Current Sequence](#save-current-sequence)
+	- [Save All Sequences](#save-all-sequences)
+	- [Open Flipbook Directory](#open-flipbook-directory)
+	- [Example: Naming](#example-naming)
+- [Installation](#installation)
+- [Customization](#customization)
+	- [Defaults](#defaults)
+	- [Custom Variables, `$JOB`, `$HIP`, etc.](#custom-variables-job-hip-etc)
+		- [Example: Use a built-in Houdini Variable](#example-use-a-built-in-houdini-variable)
+		- [Example: Editing the Package File](#example-editing-the-package-file)
+- [Notes](#notes)
+- [Future](#future)
+
 
 # Features #
-### Save Current Sequence ###
+## Save Current Sequence ##
 
 Saves the currently selected sequence to a directory.
 
 ![Save Current Sequence](/assets/save_current_repeat.gif)
 
-### Save All Sequences ###
+## Save All Sequences ##
 
 Saves all loaded sequences to a directory.
 
 ![Save All Sequences](/assets/save_all.gif)
 
-### Open Flipbook Directory ###
+## Open Flipbook Directory ##
 
 Launches the system's file browser and navigates to the base flipbook directory (as set by `MPLAY_BATCH_FLIPBOOK_DIR`)
 
@@ -49,12 +53,12 @@ Launches the system's file browser and navigates to the base flipbook directory 
 By default, each sequence is saved like this:
 
 ```
-{FLIPBOOK_DIR}/{HIPNAME}_{SUB_VERSION}/{HIPNAME}_{SUB_VERSION}_{SEQUENCE_INDEX}.$F.{EXT}
+{FLIPBOOK_DIR}/{HIPNAME}_{SUB_VERSION}/{HIPNAME}_{SUB_VERSION}_{SEQ_INDEX}.$F.{EXT}
 ```
 
 ![Naming Breakdown](/assets/name_breakdown.png)
 
-### Example: Naming ###
+## Example: Naming ##
 
 So if you're working in a hipfile called `myproj_sickexplosion_v002.hip`, and you ran _Save Current Sequence_ for the first time, it would be saved as:
 
@@ -88,12 +92,12 @@ There are a few parameters that can be customized via environment variables. The
 
 ## Defaults ##
 
-|Environment Variable           |Default    |Description                                        |
-|-------------------------------|-----------|---------------------------------------------------|
-|`MPLAY_BATCH_FLIPBOOK_DIR`     |`$JOB/flip`|Where sequences get saved<sup>1</sup>             |
-|`MPLAY_BATCH_EXTENSION`        |`jpg`      |Image type to save                                |
-|`MPLAY_BATCH_PAD_SUB_VERSION`  |`3`        |Zero Padding to add to the "Sub-version" suffix   |
-|`MPLAY_BATCH_PAD_SEQ_INDEX`    |`0`        |Zero Padding to add to each sequence's suffix     |
+| Environment Variable          | Default     | Description                                     |
+| ----------------------------- | ----------- | ----------------------------------------------- |
+| `MPLAY_BATCH_FLIPBOOK_DIR`    | `$JOB/flip` | Where sequences get saved<sup>1</sup>           |
+| `MPLAY_BATCH_EXTENSION`       | `jpg`       | Image type to save                              |
+| `MPLAY_BATCH_PAD_SUB_VERSION` | `3`         | Zero Padding to add to the "Sub-version" suffix |
+| `MPLAY_BATCH_PAD_SEQ_INDEX`   | `0`         | Zero Padding to add to each sequence's suffix   |
 
 <sup>1</sup> *This directory __must__ exist. It will not be created automatically!*
 
