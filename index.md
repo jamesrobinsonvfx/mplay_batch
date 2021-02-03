@@ -2,21 +2,26 @@
 
 Menu add-on for MPlay to quickly batch write sequences.
 
-[PICS N GIFS HERE]
+![MPlay Batch Menu](/assets/menu.png)
 
 # Features
 ### Save Current Sequence
 
 Saves the currently selected sequence to a directory.
 
+![Save Current Sequence](/assets/save_current_repeat.gif)
+
 ### Save All Sequences
 
 Saves all loaded sequences to a directory.
+
+![Save All Sequences](/assets/save_all.gif)
 
 ### Open Flipbook Directory
 
 Launches the system's file browser and navigates to the base flipbook directory (as set by `MPLAY_BATCH_FLIPBOOK_DIR`)
 
+![Open Flipbook Directory](/assets/open_flipbook_dir.gif)
 
 By default, each sequence is saved like this:
 
@@ -34,7 +39,7 @@ Each time you run _Save Current Sequence_, a new `SUB_VERSION` folder is created
 
 [ PIC HERE ]
 
-When running _Save All Sequences_, all sequences loaded in memory are written to disk inside of a single `SUB_VERSION` folder. Each sequence has a unique `SEQUENCE_INDEX` suffix appended to it. In general, they _should_ write to disk in the same order they were written, however in my testing I found that this is not guaranteed. 
+When running _Save All Sequences_, all sequences loaded in memory are written to disk inside of a single `SUB_VERSION` folder. Each sequence has a unique `SEQUENCE_INDEX` suffix appended to it. In general, they _should_ write to disk in the same order they were written, however in my testing I found that this is not guaranteed.
 
 [PIC HERE]
 
@@ -50,7 +55,7 @@ When running _Save All Sequences_, all sequences loaded in memory are written to
 
 Installation is easy using [Houdini Packages](link).
 
-You can copy this entire folder to anywhere that packages are scanned for. Easiest is probably in you `HOUDINI_USER_PREF_DIR/packages` folder. Once you've moved it there, just copy/move the package file `mplay_batch.json` directly into `HOUDINI_USER_PREF_DIR/packages`. The package is set up by default for this configuration. 
+You can copy this entire folder to anywhere that packages are scanned for. Easiest is probably in you `HOUDINI_USER_PREF_DIR/packages` folder. Once you've moved it there, just copy/move the package file `mplay_batch.json` directly into `HOUDINI_USER_PREF_DIR/packages`. The package is set up by default for this configuration.
 
 If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATCH_INSTALL_DIR` key to something else, ie `"$HOME/dev/mplay_batch` or `"C:/Users/James/houdini_tools/mplay_batch"`. Just make sure that the `mplay_batch.json` file still lives in a packages folder that Houdini will scan.
 
