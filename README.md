@@ -9,7 +9,7 @@ For more info, see the [MPlay Batch GitHub Page](https://jamesrobinsonvfx.github
 
 1. Navigate to where you want to put the package (probably `$HOUDINI_USER_PREF_DIR/packages`)
 2. From a bash or git-bash shell, run `git clone https://github.com/jamesrobinsonvfx/mplay_batch.git`
-3. Copy `mplay_batch/mplay_batch.json` to the same `packages` directory. (again, probably `$HOUDINI_USER_PREF_DIR/packages`)
+3. Copy `mplay_batch/mplay_batch.json` to the same `packages` directory (again, probably `$HOUDINI_USER_PREF_DIR/packages`)
 
 ### Option 2: Download Zip
 1. Download the latest [.zip](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest/download/mplay_batch.zip) or [.tar.gz](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest/download/mplay_batch.tar.gz) from the [Releases Page](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest)
