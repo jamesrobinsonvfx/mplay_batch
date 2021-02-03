@@ -78,7 +78,7 @@ When running _Save All Sequences_, all sequences loaded in memory are written to
 
 # Installation #
 
-Installation is easy using [Houdini Packages](link).
+Installation is easy using [Houdini Packages](https://www.sidefx.com/docs/houdini/ref/plugins.html).
 
 You can copy this entire folder to anywhere that packages are scanned for. Easiest is probably in you `HOUDINI_USER_PREF_DIR/packages` folder. Once you've moved it there, just copy/move the package file `mplay_batch.json` directly into `HOUDINI_USER_PREF_DIR/packages`. The package is set up by default for this configuration.
 
