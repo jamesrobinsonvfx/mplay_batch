@@ -6,9 +6,11 @@ Menu add-on for MPlay to quickly batch write sequences.
 
 ## Quick Installation ##
 
-1. Download
-2. Copy the entire folder to `$HOUDINI_USER_PREF_DIR/packages`
+1. Download and extract into `mplay_batch`
+2. Copy the entire `mplay_batch` folder to `$HOUDINI_USER_PREF_DIR/packages`
 3. Copy `mplay_batch.json` to `$HOUDINI_USER_PREF_DIR/packages`
+
+![Installation Filesystem Example](/assets/images/installation_example.png)
 
 And you're all set!
 
@@ -29,6 +31,23 @@ And you're all set!
 		- [Example: Editing the Package File](#example-editing-the-package-file)
 - [Notes](#notes)
 - [Future](#future)
+
+
+MPlay (the built-in tool for reviewing flipbooks) comes with a really useful
+feature for reviewing sequences, called the __Sequence List__. If you're not
+familiar, if you click the filmstrip icon ![Filmstrip
+Icon](/assets/images/filmstrip_icon.png) instead of hitting <kbd>esc</kbd> or the
+little red x, MPlay will start writing a new sequence to memory, while keeping
+the previous one available for viewing and comparison.
+
+![Sequence List Only Demo](/assets/images/sequence_list_only.gif)
+
+However, if you want to save the sequences out, it can be a little tedious doing
+them one by one! That's where __MPlay Batch__ comes in.
+
+
+Read more about the [Sequence
+List here](https://www.sidefx.com/docs/houdini/mplay/mplay_sequence_dialog.html).
 
 
 # Features #
