@@ -1,10 +1,10 @@
-# MPlay Batch
+# MPlay Batch #
 
 Menu add-on for MPlay to quickly batch write sequences.
 
 ![MPlay Batch Menu](/assets/menu.png)
 
-## Quick Installation
+## Quick Installation ##
 
 1. Download
 2. Copy the entire folder to `$HOUDINI_USER_PREF_DIR/packages`
@@ -12,7 +12,7 @@ Menu add-on for MPlay to quickly batch write sequences.
 
 And you're all set!
 
-# Overview
+# Overview #
 * [Features](#Features)
 	* [Save Current Sequence](#Save-Current-Sequence)
 	* [Save All Sequences](#Save-All-Sequences)
@@ -21,26 +21,26 @@ And you're all set!
 * [Installation](#Installation)
 * [Customization](#Customization)
 	* [Defaults](#Defaults)
-	* [Custom Variables $JOB, $HIP, etc](#Custom-Variables-$JOB,-$HIP,-etc)
+	* [Custom Variables $JOB, $HIP, etc.](#Custom-Variables-$JOB,-$HIP,-etc)
 	* [Example: Use a built-in Houdini Variable](#Example:-Use-a-built-in-Houdini-Variable)
 	* [Example: Editing the Package File](#Example:-Editing-the-Package-File)
 * [Notes](#Notes)
 * [Future](#Future)
 
-# Features
-### Save Current Sequence
+# Features #
+### Save Current Sequence ###
 
 Saves the currently selected sequence to a directory.
 
 ![Save Current Sequence](/assets/save_current_repeat.gif)
 
-### Save All Sequences
+### Save All Sequences ###
 
 Saves all loaded sequences to a directory.
 
 ![Save All Sequences](/assets/save_all.gif)
 
-### Open Flipbook Directory
+### Open Flipbook Directory ###
 
 Launches the system's file browser and navigates to the base flipbook directory (as set by `MPLAY_BATCH_FLIPBOOK_DIR`)
 
@@ -54,7 +54,7 @@ By default, each sequence is saved like this:
 
 ![Naming Breakdown](/assets/name_breakdown.png)
 
-### Example: Naming
+### Example: Naming ###
 
 So if you're working in a hipfile called `myproj_sickexplosion_v002.hip`, and you ran _Save Current Sequence_ for the first time, it would be saved as:
 
@@ -72,7 +72,7 @@ When running _Save All Sequences_, all sequences loaded in memory are written to
 
 
 
-# Installation
+# Installation #
 
 Installation is easy using [Houdini Packages](link).
 
@@ -82,11 +82,11 @@ If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATC
 
 [Back to top](#Overview)
 
-# Customization
+# Customization #
 
 There are a few parameters that can be customized via environment variables. The easiest place to set these would be in the package itself, though as long as they're set _somewhere_ (system variables, .bashrc, etc) they should be fine.
 
-## Defaults:
+## Defaults ##
 
 |Environment Variable           |Default    |Description                                        |
 |-------------------------------|-----------|---------------------------------------------------|
@@ -97,18 +97,18 @@ There are a few parameters that can be customized via environment variables. The
 
 <sup>1</sup> *This directory __must__ exist. It will not be created automatically!*
 
-## Custom Variables, `$JOB`, `$HIP`, etc.
+## Custom Variables, `$JOB`, `$HIP`, etc. ##
 
 To use custom variables in the file pattern for `MPLAY_BATCH_FLIPBOOK_DIR`, just wrap it in `__` instead of starting with `$`.
 
-### Example: Use a built-in Houdini Variable
+### Example: Use a built-in Houdini Variable ###
 
 Use `$HIP/flipbooks` as the default saving location:
 
 `"__HIP__/flipbooks"`
 
 
-### Example: Editing the Package File
+### Example: Editing the Package File ###
 
 Here are some examples you can add to the `env` key in the package file:
 
@@ -132,7 +132,7 @@ Here are some examples you can add to the `env` key in the package file:
 
 [Back to top](#Overview)
 
-# Notes
+# Notes #
 
 * Scripting for MPlay is a bit limited at the moment, as there is no HOM interface. Everything gets scripted with HScript, and there is no access to `hou.ui` when running MPlay. If this is ever addressed, I'll be sure to modify the code to be a bit sleeker, and have some more options!
 
@@ -142,7 +142,7 @@ Here are some examples you can add to the `env` key in the package file:
 
 [Back to top](#Overview)
 
-# Future
+# Future #
 
 * Could make naming more customizable
 * __Save All Viewers__ option if I can figure out why only one viewer is listed when several are open!
