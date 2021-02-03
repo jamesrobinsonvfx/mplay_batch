@@ -28,7 +28,8 @@ github_username: jamesrobinsonvfx
 show_downloads: true
 
 # Build settings
-theme: jekyll-theme-modernist
+# theme: jekyll-theme-modernist
+remote_theme: poole/hyde
 plugins:
   - jekyll-feed
 
