@@ -2,7 +2,7 @@
 
 Menu add-on for MPlay to quickly batch write sequences.
 
-![MPlay Batch Menu](/assets/menu.png)
+![MPlay Batch Menu](/assets/images/menu.png)
 
 ## Quick Installation ##
 
@@ -36,19 +36,19 @@ And you're all set!
 
 Saves the currently selected sequence to a directory.
 
-![Save Current Sequence](/assets/save_current_repeat.gif)
+![Save Current Sequence](/assets/images/save_current_repeat.gif)
 
 ## Save All Sequences ##
 
 Saves all loaded sequences to a directory.
 
-![Save All Sequences](/assets/save_all.gif)
+![Save All Sequences](/assets/images/save_all.gif)
 
 ## Open Flipbook Directory ##
 
 Launches the system's file browser and navigates to the base flipbook directory (as set by `MPLAY_BATCH_FLIPBOOK_DIR`)
 
-![Open Flipbook Directory](/assets/open_flipbook_dir.gif)
+![Open Flipbook Directory](/assets/images/open_flipbook_dir.gif)
 
 By default, each sequence is saved like this:
 
@@ -56,7 +56,7 @@ By default, each sequence is saved like this:
 {FLIPBOOK_DIR}/{HIPNAME}_{SUB_VERSION}/{HIPNAME}_{SUB_VERSION}_{SEQ_INDEX}.$F.{EXT}
 ```
 
-![Naming Breakdown](/assets/name_breakdown.png)
+![Naming Breakdown](/assets/images/name_breakdown.png)
 
 ## Example: Naming ##
 
@@ -68,11 +68,11 @@ $JOB/flip/myproj_sickexplosion_v002_000/myproj_sickexplosion_v002_000_0.$F.jpg
 
 Each time you run _Save Current Sequence_, a new `SUB_VERSION` folder is created inside the `FLIPBOOK_DIR`. This helps keep subsequent writes unique.
 
-![New Sub-Version Directory](/assets/new_sub_version.png)
+![New Sub-Version Directory](/assets/images/new_sub_version.png)
 
 When running _Save All Sequences_, all sequences loaded in memory are written to disk inside of a single `SUB_VERSION` folder. Each sequence has a unique `SEQUENCE_INDEX` suffix appended to it. In general, they _should_ write to disk in the same order they were written, however this is not guaranteed.
 
-![Multiple Sequence Save Result](/assets/multi_sequence_scroll.png)
+![Multiple Sequence Save Result](/assets/images/multi_sequence_scroll.png)
 
 
 
