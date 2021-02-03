@@ -84,7 +84,7 @@ You can copy this entire folder to anywhere that packages are scanned for. Easie
 
 If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATCH_INSTALL_DIR` key to something else, ie `"$HOME/dev/mplay_batch` or `"C:/Users/James/houdini_tools/mplay_batch"`. Just make sure that the `mplay_batch.json` file still lives in a packages folder that Houdini will scan.
 
-[Back to top](#Overview)
+[Back to top](#overview)
 
 # Customization #
 
@@ -134,7 +134,7 @@ Here are some examples you can add to the `env` key in the package file:
 }
 ```
 
-[Back to top](#Overview)
+[Back to top](#overview)
 
 # Notes #
 
@@ -144,7 +144,7 @@ Here are some examples you can add to the `env` key in the package file:
 
 * The entire frame range will be written for each sequence
 
-[Back to top](#Overview)
+[Back to top](#overview)
 
 # Future #
 
@@ -152,4 +152,4 @@ Here are some examples you can add to the `env` key in the package file:
 * __Save All Viewers__ option if I can figure out why only one viewer is listed when several are open!
 * Verbosity, prints, logging
 
-[Back to top](#Overview)
+[Back to top](#overview)
