@@ -10,3 +10,29 @@
     border-radius: 8px;
     box-shadow: rgba(#000, 0.2) 0 0 0 1px, rgba(#000, 0.45) 0 3px 10px;
   }
+
+  pre {
+      padding:20px;
+      background: #3A3C42;
+      color: #f8f8f2;
+      margin:0 -20px 20px;
+
+      code {
+          color: #f8f8f2;
+          background-color: #3A3C42;
+          font-size: 12px;
+      }
+
+      li & {
+          margin-left: -60px;
+          padding-left: 60px;
+      }
+  }
+
+  code {
+    font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
+    color:rgb(32, 32, 32);
+    font-size:14px;
+    overflow-x: auto;
+    background-color:rgba(158, 152, 152, 0.418);
+}
