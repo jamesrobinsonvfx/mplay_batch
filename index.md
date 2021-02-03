@@ -29,6 +29,10 @@ By default, each sequence is saved like this:
 {FLIPBOOK_DIR}/{HIPNAME}_{SUB_VERSION}/{HIPNAME}_{SUB_VERSION}_{SEQUENCE_INDEX}.$F.{EXT}
 ```
 
+![Naming Breakdown](/assets/name_breakdown.png)
+
+### Example:
+
 So if you're working in a hipfile called `myproj_sickexplosion_v002.hip`, and you ran _Save Current Sequence_ for the first time, it would be saved as:
 
 ```
@@ -37,11 +41,11 @@ $JOB/flip/myproj_sickexplosion_v002_000/myproj_sickexplosion_v002_000_0.$F.jpg
 
 Each time you run _Save Current Sequence_, a new `SUB_VERSION` folder is created inside the `FLIPBOOK_DIR`. This helps keep subsequent writes unique.
 
-[ PIC HERE ]
+![New Sub-Version Directory](/assets/new_sub_version.png)
 
 When running _Save All Sequences_, all sequences loaded in memory are written to disk inside of a single `SUB_VERSION` folder. Each sequence has a unique `SEQUENCE_INDEX` suffix appended to it. In general, they _should_ write to disk in the same order they were written, however in my testing I found that this is not guaranteed.
 
-[PIC HERE]
+![Multiple Sequence Save Result](/assets/multi_sequence_scroll.gif)
 
 
 
@@ -65,14 +69,14 @@ If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATC
 There are a few parameters that can be customized via environment variables. The easiest place to set these would be in the package itself, though as long as they're set _somewhere_ (system variables, .bashrc, etc) they should be fine.
 
 ## Defaults:
-|Environment Variable           |Default    |Description |
-|-------------------------------|-----------|------------|
-|`MPLAY_BATCH_FLIPBOOK_DIR`     |`$JOB/flip`| Where sequences get saved [^1]
-|`MPLAY_BATCH_EXTENSION`        |`jpg`      | Image type to save
-|`MPLAY_BATCH_PAD_SUB_VERSION`  |`3`        | Zero Padding to add to the "Sub-version" suffix
-|`MPLAY_BATCH_PAD_SEQ_INDEX`    |`0`        | Zero Padding to add to each sequence's suffix
+|Environment Variable           |Default    |Description                                        |
+|-------------------------------|-----------|---------------------------------------------------|
+|`MPLAY_BATCH_FLIPBOOK_DIR`     |`$JOB/flip`| Where sequences get saved <sup>1</sup>            |
+|`MPLAY_BATCH_EXTENSION`        |`jpg`      | Image type to save                                |
+|`MPLAY_BATCH_PAD_SUB_VERSION`  |`3`        | Zero Padding to add to the "Sub-version" suffix   |
+|`MPLAY_BATCH_PAD_SEQ_INDEX`    |`0`        | Zero Padding to add to each sequence's suffix     |
 
-[^1] *This directory __must__ exist. It will not be created automatically!*
+<sup>1</sup> *This directory __must__ exist. It will not be created automatically!*
 
 ## Custom Variables, `$JOB`, `$HIP`, etc.
 
