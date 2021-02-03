@@ -43,9 +43,9 @@ Each time you run _Save Current Sequence_, a new `SUB_VERSION` folder is created
 
 ![New Sub-Version Directory](/assets/new_sub_version.png)
 
-When running _Save All Sequences_, all sequences loaded in memory are written to disk inside of a single `SUB_VERSION` folder. Each sequence has a unique `SEQUENCE_INDEX` suffix appended to it. In general, they _should_ write to disk in the same order they were written, however in my testing I found that this is not guaranteed.
+When running _Save All Sequences_, all sequences loaded in memory are written to disk inside of a single `SUB_VERSION` folder. Each sequence has a unique `SEQUENCE_INDEX` suffix appended to it. In general, they _should_ write to disk in the same order they were written, however this is not guaranteed.
 
-![Multiple Sequence Save Result](/assets/multi_sequence_scroll.gif)
+![Multiple Sequence Save Result](/assets/multi_sequence.png)
 
 
 
@@ -69,12 +69,13 @@ If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATC
 There are a few parameters that can be customized via environment variables. The easiest place to set these would be in the package itself, though as long as they're set _somewhere_ (system variables, .bashrc, etc) they should be fine.
 
 ## Defaults:
+
 |Environment Variable           |Default    |Description                                        |
 |-------------------------------|-----------|---------------------------------------------------|
-|`MPLAY_BATCH_FLIPBOOK_DIR`     |`$JOB/flip`| Where sequences get saved <sup>1</sup>            |
-|`MPLAY_BATCH_EXTENSION`        |`jpg`      | Image type to save                                |
-|`MPLAY_BATCH_PAD_SUB_VERSION`  |`3`        | Zero Padding to add to the "Sub-version" suffix   |
-|`MPLAY_BATCH_PAD_SEQ_INDEX`    |`0`        | Zero Padding to add to each sequence's suffix     |
+|`MPLAY_BATCH_FLIPBOOK_DIR`     |`$JOB/flip`|Where sequences get saved<sup>1</sup>             |
+|`MPLAY_BATCH_EXTENSION`        |`jpg`      |Image type to save                                |
+|`MPLAY_BATCH_PAD_SUB_VERSION`  |`3`        |Zero Padding to add to the "Sub-version" suffix   |
+|`MPLAY_BATCH_PAD_SEQ_INDEX`    |`0`        |Zero Padding to add to each sequence's suffix     |
 
 <sup>1</sup> *This directory __must__ exist. It will not be created automatically!*
 
@@ -84,9 +85,9 @@ To use custom variables in the file pattern for `MPLAY_BATCH_FLIPBOOK_DIR`, just
 
 Example:
 
-Use `$HIP/flipbooks" as the default saving location:
+Use `$HIP/flipbooks` as the default saving location:
 
-`"__HIP__"/flipbooks"
+`"__HIP__/flipbooks"`
 
 
 ## Examples
@@ -94,6 +95,7 @@ Use `$HIP/flipbooks" as the default saving location:
 Here are some examples you can add to the `env` key in the package file:
 
 ```json
+{
 ...
 },
 {
@@ -106,7 +108,7 @@ Here are some examples you can add to the `env` key in the package file:
 	"MPLAY_BATCH_PAD_SEQ_INDEX": "2"
 },
 {
-	"MPLAY_BATCH_PAD_SUB_VERSION: "4"
+	"MPLAY_BATCH_PAD_SUB_VERSION": "4"
 }
 ```
 
@@ -114,7 +116,7 @@ Here are some examples you can add to the `env` key in the package file:
 
 * Scripting for MPlay is a bit limited at the moment, as there is no HOM interface. Everything gets scripted with HScript, and there is no access to `hou.ui` when running MPlay. If this is ever addressed, I'll be sure to modify the code to be a bit sleeker, and have some more options!
 
-* The `mplay_batch` pacakge location must be appended to `PYTHONPATH` for this plugin to be picked up by MPlay. Modifying `HOUDINI_PATH` and having a `python2.7libs` directory alond is not enough (that's why it's set explicitly in the package definition).
+* The `mplay_batch` package location must be appended to `PYTHONPATH` for this plugin to be picked up by MPlay. Modifying `HOUDINI_PATH` and having a `python2.7libs` directory alone is not enough (that's why it's set explicitly in the package definition).
 
 * The entire frame range will be written for each sequence
 
