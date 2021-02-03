@@ -26,6 +26,9 @@ url: "https://jamesrobinsonvfx.github.io" # the base hostname & protocol for you
 github_username: jamesrobinsonvfx
 
 show_downloads: true
+github:
+  zip_url: https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest/download/mplay_batch.zip
+  tar_url: https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest/download/mplay_batch.tar.gz
 
 # Build settings
 theme: jekyll-theme-modernist
@@ -35,6 +38,8 @@ plugins:
 markdown: kramdown
 kramdown:
     auto_ids: true
+
+
 
 # Exclude from processing.
 # The following items will not be processed, by default.
