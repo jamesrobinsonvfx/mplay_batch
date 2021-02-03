@@ -2,7 +2,7 @@
 
 Menu add-on for MPlay to quickly batch write sequences.
 
-![MPlay Batch Menu](/assets/images/menu.png)
+![MPlay Batch Menu](assets/images/menu.png)
 
 ## Quick Installation ##
 
@@ -10,7 +10,7 @@ Menu add-on for MPlay to quickly batch write sequences.
 2. Copy the entire `mplay_batch` folder to `$HOUDINI_USER_PREF_DIR/packages`
 3. Copy `mplay_batch.json` to `$HOUDINI_USER_PREF_DIR/packages`
 
-![Installation Filesystem Example](/assets/images/installation_example.png)
+![Installation Filesystem Example](assets/images/installation_example.png)
 
 And you're all set!
 
@@ -36,11 +36,11 @@ And you're all set!
 MPlay (the built-in tool for reviewing flipbooks) comes with a really useful
 feature for reviewing sequences, called the __Sequence List__. If you're not
 familiar, if you click the filmstrip icon ![Filmstrip
-Icon](/assets/images/filmstrip_icon.png) instead of hitting <kbd>esc</kbd> or the
+Icon](assets/images/filmstrip_icon.png) instead of hitting <kbd>esc</kbd> or the
 little red x, MPlay will start writing a new sequence to memory, while keeping
 the previous one available for viewing and comparison.
 
-![Sequence List Only Demo](/assets/images/sequence_list_only.gif)
+![Sequence List Only Demo](assets/images/sequence_list_only.gif)
 
 However, if you want to save the sequences out, it can be a little tedious doing
 them one by one! That's where __MPlay Batch__ comes in.
@@ -55,19 +55,19 @@ List here](https://www.sidefx.com/docs/houdini/mplay/mplay_sequence_dialog.html)
 
 Saves the currently selected sequence to a directory.
 
-![Save Current Sequence](/assets/images/save_current_repeat.gif)
+![Save Current Sequence](assets/images/save_current_repeat.gif)
 
 ## Save All Sequences ##
 
 Saves all loaded sequences to a directory.
 
-![Save All Sequences](/assets/images/save_all.gif)
+![Save All Sequences](assets/images/save_all.gif)
 
 ## Open Flipbook Directory ##
 
 Launches the system's file browser and navigates to the base flipbook directory (as set by `MPLAY_BATCH_FLIPBOOK_DIR`)
 
-![Open Flipbook Directory](/assets/images/open_flipbook_dir.gif)
+![Open Flipbook Directory](assets/images/open_flipbook_dir.gif)
 
 By default, each sequence is saved like this:
 
@@ -75,7 +75,7 @@ By default, each sequence is saved like this:
 {FLIPBOOK_DIR}/{HIPNAME}_{SUB_VERSION}/{HIPNAME}_{SUB_VERSION}_{SEQ_INDEX}.$F.{EXT}
 ```
 
-![Naming Breakdown](/assets/images/name_breakdown.png)
+![Naming Breakdown](assets/images/name_breakdown.png)
 
 ## Example: Naming ##
 
@@ -87,11 +87,11 @@ $JOB/flip/myproj_sickexplosion_v002_000/myproj_sickexplosion_v002_000_0.$F.jpg
 
 Each time you run _Save Current Sequence_, a new `SUB_VERSION` folder is created inside the `FLIPBOOK_DIR`. This helps keep subsequent writes unique.
 
-![New Sub-Version Directory](/assets/images/new_sub_version.png)
+![New Sub-Version Directory](assets/images/new_sub_version.png)
 
 When running _Save All Sequences_, all sequences loaded in memory are written to disk inside of a single `SUB_VERSION` folder. Each sequence has a unique `SEQUENCE_INDEX` suffix appended to it. In general, they _should_ write to disk in the same order they were written, however this is not guaranteed.
 
-![Multiple Sequence Save Result](/assets/images/multi_sequence_scroll.png)
+![Multiple Sequence Save Result](assets/images/multi_sequence_scroll.png)
 
 
 
