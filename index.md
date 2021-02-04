@@ -1,8 +1,13 @@
+---
+vimeo_id: 508260914
+---
 # MPlay Batch
 
 Menu add-on for MPlay to quickly batch write sequences.
 
 ![MPlay Batch Menu](assets/images/menu.png)
+
+{% include vimeo_player.html id=page.vimeo_id %}
 
 ## Quick Installation ##
 
