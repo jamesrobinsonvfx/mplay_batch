@@ -177,5 +177,6 @@ Here are some examples you can add to the `env` key in the package file:
 * Could make naming more customizable
 * __Save All Viewers__ option if I can figure out why only one viewer is listed when several are open!
 * Verbosity, prints, logging
+* See if adding a PySide dialog works
 
 [Back to top](#overview)
