@@ -2,9 +2,13 @@
 import errno
 import os
 import re
+import shlex
+import subprocess
 import sys
 
 import hou
+
+from distutils.spawn import find_executable
 
 
 class EnvironmentVariableTypeError(TypeError):
@@ -32,17 +36,29 @@ class EnvironmentVariableValueError(ValueError):
         return self.message
 
 
+class MissingFFmpegError(EnvironmentError):
+    """Exception for missing ffmpeg executable"""
+
+    def __str__(self):
+        return (
+            "Missing ffmpeg executable."
+            "Please make sure it is installed and available "
+            "on the system's PATH")
+
+
 class Environment(object):
     """Object to initialize and store information about the session."""
 
     def __init__(
             self,
             ext="jpg",
+            video_format="mov",
             flipbook_dir="$JOB/flip",
             pad_sub_version=3,
             pad_seq_index=0
     ):
         self._ext = ""
+        self._video_format = ""
         self._flipbook_dir = ""
         self._pad_sub_version = 3
         self._pad_seq_index = 0
@@ -50,6 +66,10 @@ class Environment(object):
             self.ext = os.environ["MPLAY_BATCH_EXTENSION"]
         except KeyError:
             self.ext = ext
+        try:
+            self.video_format = os.environ["MPLAY_BATCH_VIDEO_FORMAT"]
+        except KeyError:
+            self.video_format = video_format
         try:
             self.flipbook_dir = os.environ["MPLAY_BATCH_FLIPBOOK_DIR"]
         except KeyError:
@@ -63,6 +83,8 @@ class Environment(object):
         except KeyError:
             self.pad_seq_index = pad_seq_index
 
+        self.fps = hou.fps()
+
     @property
     def ext(self):
         """Image file type.
@@ -75,6 +97,14 @@ class Environment(object):
     @ext.setter
     def ext(self, extension):
         self._ext = re.sub(r"(\.?)(\w*\d*\.*)", r"\2", extension)
+
+    @property
+    def video_format(self):
+        return self._video_format
+
+    @video_format.setter
+    def video_format(self, extension):
+        self._video_format = re.sub(r"(\.?)(\w*\d*\.*)", r"\2", extension)
 
     @property
     def flipbook_dir(self):
@@ -276,12 +306,28 @@ class Sequence(object):
         # Avoid os.path.join to preserve escape characters on windows
         return "{0}/{1}".format(self.seq_dir.dirname, self.basename)
 
-    def _format_basename(self):
-        """Format an HScript friendly basename for this sequence."""
-        return r"{0}_{1}_{2}.\$\F.{3}".format(
+    @property
+    def ffmpeg_pattern(self):
+        return "{0}/{1}".format(
+            self.seq_dir.dirname, self._format_basename(frame_symbol=r"%d"))
+
+    @property
+    def video_path(self):
+        return "{0}/{1}_{2}_{3}.{4}".format(
+            self.seq_dir.dirname,
             self.seq_dir.name,
             str(self.seq_dir.sub_version),
             str(self.index).zfill(self.seq_dir.env.pad_seq_index),
+            self.seq_dir.env.video_format
+        )
+
+    def _format_basename(self, frame_symbol=r"\$\F"):
+        """Format an HScript friendly basename for this sequence."""
+        return r"{0}_{1}_{2}.{3}.{4}".format(
+            self.seq_dir.name,
+            str(self.seq_dir.sub_version),
+            str(self.index).zfill(self.seq_dir.env.pad_seq_index),
+            frame_symbol,
             self.seq_dir.env.ext
         )
 
@@ -292,15 +338,35 @@ class Sequence(object):
 class SequenceWriter(object):
     """Handles writing sequences from MPlay."""
 
-    def __init__(self, env):
+    def __init__(self, env, video=False):
         self.env = env
+        self.video = video
         self.location = SequenceDir(hou.hipFile.basename(), env)
-        self.cmds = []
+        self.cmds = {"hscript": [], "subprocess": []}
+
+        if self.video:
+            if not find_executable("ffmpeg"):
+                raise MissingFFmpegError
+
+    def execute(self):
+        """Run through command queue."""
+        for cmd in self.cmds["hscript"]:
+            hou.hscript(cmd)
+        for cmd in self.cmds["subprocess"]:
+            subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=True
+            )  # TODO: which thing to use?
 
     def save_current(self):
         """Save the currently selected sequence to disk."""
         seq = Sequence(self.location)
-        self.cmds.append("imgsave -a {0}".format(seq.path))
+        self.cmds["hscript"].append("imgsave -a {0}".format(seq.path))
+        if self.video:
+            self.cmds["subprocess"].append(
+                self.format_ffmpeg_cmd(seq, self.env))
         return self
 
     def save_all_seqs(self):
@@ -308,8 +374,11 @@ class SequenceWriter(object):
         seqls = hou.hscript("seqls")[0].split("\n")[:-1]
         for i, seq_name in enumerate(seqls):
             seq = Sequence(self.location, index=i)
-            self.cmds.append(
+            self.cmds["hscript"].append(
                 "imgsave -s {0} -a {1}".format(seq_name, seq.path))
+            if self.video:
+                self.cmds["subprocess"].append(
+                    self.format_ffmpeg_cmd(seq, self.env))
         return self
 
     def save_all_viewers(self):
@@ -320,10 +389,15 @@ class SequenceWriter(object):
             self.cmds.append("imgsave -a {0} {1}".format(seq.path, view))
         return self
 
-    def execute(self):
-        """Run through command queue."""
-        for cmd in self.cmds:
-            hou.hscript(cmd)
+    @staticmethod
+    def format_ffmpeg_cmd(seq, env):
+        return shlex.split(
+            "ffmpeg -framerate {0} {1} {2}".format(
+                env.fps,
+                seq.ffmpeg_pattern,
+                seq.video_path
+            )
+        )
 
 
 def open_flipbook_dir(env):
@@ -357,7 +431,8 @@ def main(kwargs):
         return
 
     # Handle menu selection
-    writer = SequenceWriter(env)
+    write_video = kwargs["shiftclick"]  # TODO: This might not work on macOS...
+    writer = SequenceWriter(env, video=True)
     try:
         command = getattr(writer, tool)
     except AttributeError:
