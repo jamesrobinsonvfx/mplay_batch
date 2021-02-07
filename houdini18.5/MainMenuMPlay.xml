@@ -3,16 +3,28 @@
     <menuBar>
         <subMenu id="mplay_batch">
             <label>Batch</label>
-            <titleItem>
-                <label>Save</label>
-            </titleItem>
+            <titleItem><label>Output</label></titleItem>
+            <scriptMenuStripRadio>
+                <variableName>MPLAY_BATCH_OUTPUT</variableName>
+                <scriptRadioItem id="output_img_seq">
+                    <label>Image Sequence</label>
+                    <variableValue>img_seq</variableValue>
+                </scriptRadioItem>
+                <scriptRadioItem id="output_video">
+                    <label>Video</label>
+                    <variableValue>video</variableValue>
+                </scriptRadioItem>
+            </scriptMenuStripRadio>
+            <scriptToggleItem id="keep_video_source">
+                <label>Keep Image Sequence (Video)</label>
+                <variableName>MPLAY_BATCH_KEEP_VIDEO_SOURCE</variableName>
+                <scriptCode><![CDATA[hou.hscript("if ( $MPLAY_BATCH_KEEP_VIDEO_SOURCE ) then;set -g MPLAY_BATCH_KEEP_VIDEO_SOURCE = 0;else;set -g MPLAY_BATCH_KEEP_VIDEO_SOURCE = 1;endif;");hou.hscript("varchange MPLAY_BATCH_KEEP_VIDEO_SOURCE")]]></scriptCode>
+            </scriptToggleItem>
+            <titleItem><label>Save</label></titleItem>
             <scriptItem id="save_current">
                 <label>Save Current Sequence</label>
                 <scriptCode><![CDATA[import mplay_batch;mplay_batch.main(kwargs)]]></scriptCode>
             </scriptItem>
-            <titleItem>
-                <label>Batch Save</label>
-            </titleItem>
             <scriptItem id="save_all_seqs">
                 <label>Save All Sequences</label>
                 <scriptCode><![CDATA[import mplay_batch;mplay_batch.main(kwargs)]]></scriptCode>
@@ -21,9 +33,7 @@
                 <label>Save All Open Viewers</label>
                 <scriptCode><![CDATA[import mplay_batch;mplay_batch.main(kwargs)]]></scriptCode>
 </scriptItem> -->
-            <titleItem>
-                <label>Utilities</label>
-            </titleItem>
+            <titleItem><label>Utilities</label></titleItem>
             <scriptItem id="open_flipbook_dir">
                 <label>Open Flipbook Directory</label>
                 <scriptCode><![CDATA[import mplay_batch;mplay_batch.main(kwargs)]]></scriptCode>
