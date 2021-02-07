@@ -1,5 +1,6 @@
 """MPlay Batch Save Utilities"""
 import errno
+import glob
 import os
 import re
 import shlex
@@ -43,7 +44,8 @@ class MissingFFmpegError(EnvironmentError):
         return (
             "Missing ffmpeg executable."
             "Please make sure it is installed and available "
-            "on the system's PATH")
+            "on the system's PATH"
+        )
 
 
 class Environment(object):
@@ -52,7 +54,7 @@ class Environment(object):
     def __init__(
             self,
             ext="jpg",
-            video_format="mov",
+            video_format="mp4",
             flipbook_dir="$JOB/flip",
             pad_sub_version=3,
             pad_seq_index=0
@@ -307,9 +309,11 @@ class Sequence(object):
         return "{0}/{1}".format(self.seq_dir.dirname, self.basename)
 
     @property
-    def ffmpeg_pattern(self):
+    def glob_pattern(self):
         return "{0}/{1}".format(
-            self.seq_dir.dirname, self._format_basename(frame_symbol=r"%d"))
+            self.seq_dir.dirname,
+            self._format_basename(frame_symbol=r"[0-9]*")
+        )
 
     @property
     def video_path(self):
@@ -338,35 +342,48 @@ class Sequence(object):
 class SequenceWriter(object):
     """Handles writing sequences from MPlay."""
 
-    def __init__(self, env, video=False):
+    def __init__(self, env, video=False, keep_video_source=False):
         self.env = env
         self.video = video
+        self.keep_video_source = keep_video_source
         self.location = SequenceDir(hou.hipFile.basename(), env)
-        self.cmds = {"hscript": [], "subprocess": []}
-
+        self.cmds = {"hscript": [], "ffmpeg": []}
+        self.seqs = []
         if self.video:
             if not find_executable("ffmpeg"):
                 raise MissingFFmpegError
 
     def execute(self):
         """Run through command queue."""
+        # Write image sequence to disk
         for cmd in self.cmds["hscript"]:
             hou.hscript(cmd)
-        for cmd in self.cmds["subprocess"]:
-            subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                shell=True
-            )  # TODO: which thing to use?
+        # Create video using ffmpeg
+        for cmd in self.cmds["ffmpeg"]:
+            result = subprocess.check_call(cmd)
+            if result != 0:
+                raise hou.Error("Something went wrong")
+        # Remove image sequence source when writing a video
+        if self.video and not self.keep_video_source:
+            for seq in self.seqs:
+                self.remove_image_sequence(seq)
+
+    @staticmethod
+    def remove_image_sequence(seq):
+        files = glob.glob(seq.glob_pattern)
+        for file_ in files:
+            try:
+                os.remove(file_)
+            except OSError:
+                continue  # For now...
 
     def save_current(self):
         """Save the currently selected sequence to disk."""
         seq = Sequence(self.location)
         self.cmds["hscript"].append("imgsave -a {0}".format(seq.path))
+        self.seqs.append(seq)
         if self.video:
-            self.cmds["subprocess"].append(
-                self.format_ffmpeg_cmd(seq, self.env))
+            self.cmds["ffmpeg"].append(self.format_ffmpeg_cmd(seq, self.env))
         return self
 
     def save_all_seqs(self):
@@ -376,8 +393,9 @@ class SequenceWriter(object):
             seq = Sequence(self.location, index=i)
             self.cmds["hscript"].append(
                 "imgsave -s {0} -a {1}".format(seq_name, seq.path))
+            self.seqs.append(seq)
             if self.video:
-                self.cmds["subprocess"].append(
+                self.cmds["ffmpeg"].append(
                     self.format_ffmpeg_cmd(seq, self.env))
         return self
 
@@ -386,18 +404,19 @@ class SequenceWriter(object):
         imgviews = hou.hscript("imgviewls")
         for i, view in enumerate(imgviews):
             seq = Sequence(self.location, index=i)
-            self.cmds.append("imgsave -a {0} {1}".format(seq.path, view))
+            self.cmds["ffmpeg"].append(
+                "imgsave -a {0} {1}".format(seq.path, view))
+            self.seqs.append(seq)
         return self
 
     @staticmethod
     def format_ffmpeg_cmd(seq, env):
-        return shlex.split(
-            "ffmpeg -framerate {0} {1} {2}".format(
-                env.fps,
-                seq.ffmpeg_pattern,
-                seq.video_path
-            )
+        ffmpeg_cmd = (
+            "ffmpeg -nostdin -framerate {0} -pix_fmt yuv420p -pattern_type glob"
+            " -i \"{1}\" \"{2}\" -c:v libx264 -movflags faststart ".format(
+                env.fps, seq.glob_pattern, seq.video_path)
         )
+        return shlex.split(ffmpeg_cmd)
 
 
 def open_flipbook_dir(env):
@@ -430,9 +449,18 @@ def main(kwargs):
         open_flipbook_dir(env)
         return
 
+    # Check "Keep Source" option
+    try:
+        keep_source = int(hou.getenv("MPLAY_BATCH_KEEP_VIDEO_SOURCE"))
+    except (ValueError, TypeError):
+        keep_source = 0
+
     # Handle menu selection
-    write_video = kwargs["shiftclick"]  # TODO: This might not work on macOS...
-    writer = SequenceWriter(env, video=True)
+    writer = SequenceWriter(
+        env,
+        video=hou.getenv("MPLAY_BATCH_OUTPUT") == "video",
+        keep_video_source=keep_source
+    )
     try:
         command = getattr(writer, tool)
     except AttributeError:
