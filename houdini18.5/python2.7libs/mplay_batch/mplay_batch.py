@@ -411,10 +411,16 @@ class SequenceWriter(object):
 
     @staticmethod
     def format_ffmpeg_cmd(seq, env):
+        # Fix for windows being windows...
+        pattern_type = "glob"
+        pattern = seq.glob_pattern
+        if "win32" in sys.platform:
+            pattern_type = "sequence"
+            pattern = pattern.replace("[0-9]*", "%d")
         ffmpeg_cmd = (
-            "ffmpeg -nostdin -framerate {0} -pix_fmt yuv420p -pattern_type glob"
-            " -i \"{1}\" \"{2}\" -c:v libx264 -movflags faststart ".format(
-                env.fps, seq.glob_pattern, seq.video_path)
+            "ffmpeg -nostdin -framerate {0} -pix_fmt yuv420p -pattern_type {1}"
+            " -i \"{2}\" \"{3}\" -c:v libx264 -movflags faststart ".format(
+                env.fps, pattern_type, pattern, seq.video_path)
         )
         return shlex.split(ffmpeg_cmd)
 
