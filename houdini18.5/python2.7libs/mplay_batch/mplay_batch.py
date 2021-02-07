@@ -7,9 +7,9 @@ import shlex
 import subprocess
 import sys
 
-import hou
-
 from distutils.spawn import find_executable
+
+import hou
 
 
 class EnvironmentVariableTypeError(TypeError):
@@ -102,11 +102,21 @@ class Environment(object):
 
     @property
     def video_format(self):
+        """Video format to write with ffmpeg.
+
+        :param extension: Video format
+        :type extension: str
+        """
         return self._video_format
 
     @video_format.setter
     def video_format(self, extension):
-        self._video_format = re.sub(r"(\.?)(\w*\d*\.*)", r"\2", extension)
+        valid_formats = ["mp4", "mov"]
+        if "win32" in sys.platform:
+            valid_formats.append("avi")
+        format_ = re.sub(r"(\.?)(\w*\d*\.*)", r"\2", extension)
+        if format_ in valid_formats:
+            self._video_format = format_
 
     @property
     def flipbook_dir(self):
@@ -310,6 +320,11 @@ class Sequence(object):
 
     @property
     def glob_pattern(self):
+        """Path to this sequence with glob pattern for frame number.
+
+        :return: Glob-patterned file name
+        :rtype: str
+        """
         return "{0}/{1}".format(
             self.seq_dir.dirname,
             self._format_basename(frame_symbol=r"[0-9]*")
@@ -317,6 +332,11 @@ class Sequence(object):
 
     @property
     def video_path(self):
+        """Path to the video component of this sequence.
+
+        :return: Path to the video
+        :rtype: str
+        """
         return "{0}/{1}_{2}_{3}.{4}".format(
             self.seq_dir.dirname,
             self.seq_dir.name,
@@ -370,6 +390,11 @@ class SequenceWriter(object):
 
     @staticmethod
     def remove_image_sequence(seq):
+        """Remove an image sequence from disk.
+
+        :param seq: Sequence to remove
+        :type seq: :class:`Sequence`
+        """
         files = glob.glob(seq.glob_pattern)
         for file_ in files:
             try:
@@ -411,6 +436,15 @@ class SequenceWriter(object):
 
     @staticmethod
     def format_ffmpeg_cmd(seq, env):
+        """Format a command for ffmpeg to export video
+
+        :param seq: Sequence to render
+        :type seq: :class:`Sequence`
+        :param env: Current session/env settings
+        :type env: :class:`Environment`
+        :return: Shlex-formatted command list
+        :rtype: list
+        """
         # Fix for windows being windows...
         pattern_type = "glob"
         pattern = seq.glob_pattern
