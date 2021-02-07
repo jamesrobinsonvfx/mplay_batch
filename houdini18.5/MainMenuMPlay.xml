@@ -18,7 +18,6 @@
             <scriptToggleItem id="keep_video_source">
                 <label>Keep Image Sequence (Video)</label>
                 <variableName>MPLAY_BATCH_KEEP_VIDEO_SOURCE</variableName>
-                <scriptCode><![CDATA[hou.hscript("if ( $MPLAY_BATCH_KEEP_VIDEO_SOURCE ) then;set -g MPLAY_BATCH_KEEP_VIDEO_SOURCE = 0;else;set -g MPLAY_BATCH_KEEP_VIDEO_SOURCE = 1;endif;");hou.hscript("varchange MPLAY_BATCH_KEEP_VIDEO_SOURCE")]]></scriptCode>
             </scriptToggleItem>
             <titleItem><label>Save</label></titleItem>
             <scriptItem id="save_current">
