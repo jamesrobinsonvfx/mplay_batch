@@ -58,7 +58,7 @@ class UnsupportedVideoFormatError(ValueError):
             "Check the value set for MPLAY_BATCH_VIDEO_FORMAT "
             "in mplay_batch.json".format(
                 video_format,
-                "\n".join(Environment.valid_video_formats)
+                "\n\t".join(Environment.valid_video_formats)
             )
         )
         super(UnsupportedVideoFormatError, self).__init__(self.message)
