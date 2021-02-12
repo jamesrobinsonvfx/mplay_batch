@@ -54,7 +54,7 @@ class UnsupportedVideoFormatError(ValueError):
     def __init__(self, video_format):
         self.message = (
             "The \"{0}\" format is not currently supported by MPlay Batch on "
-            "this system.\nSupported formats include:\n{1}\n"
+            "this system.\nSupported formats include:\n\t{1}\n"
             "Check the value set for MPLAY_BATCH_VIDEO_FORMAT "
             "in mplay_batch.json".format(
                 video_format,
