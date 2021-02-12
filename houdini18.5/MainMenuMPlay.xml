@@ -28,10 +28,6 @@
                 <label>Save All Sequences</label>
                 <scriptCode><![CDATA[import mplay_batch;mplay_batch.main(kwargs)]]></scriptCode>
             </scriptItem>
-            <!-- <scriptItem id="save_all_viewers">
-                <label>Save All Open Viewers</label>
-                <scriptCode><![CDATA[import mplay_batch;mplay_batch.main(kwargs)]]></scriptCode>
-</scriptItem> -->
             <titleItem><label>Utilities</label></titleItem>
             <scriptItem id="open_flipbook_dir">
                 <label>Open Flipbook Directory</label>
