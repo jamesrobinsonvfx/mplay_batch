@@ -473,6 +473,22 @@ def open_flipbook_dir(env):
         os.system("gio open {0}".format(env.flipbook_dir))
 
 
+def check_toggle_variable(var):
+    """Check the state of menu toggle's variable.
+
+    :param var: Variable to check
+    :type var: str
+    :return: Variable value. -1 if any undefined input
+    :rtype: int
+    """
+    value = -1
+    try:
+        value = int(hou.getenv(var))
+    except (ValueError, TypeError):
+        value = 0
+    return value
+
+
 def main(kwargs):
     """Entry point for the MPlay Batch program.
 
@@ -489,16 +505,15 @@ def main(kwargs):
         open_flipbook_dir(env)
         return
 
-    # Check "Keep Source" option
-    try:
-        keep_source = int(hou.getenv("MPLAY_BATCH_KEEP_VIDEO_SOURCE"))
-    except (ValueError, TypeError):
-        keep_source = 0
+    # Check video options
+    # TODO: Revert back to Radio Button style when RFE is fixed.
+    keep_source = check_toggle_variable("MPLAY_BATCH_KEEP_VIDEO_SOURCE")
+    export_video = check_toggle_variable("MPLAY_BATCH_OUTPUT_VIDEO")
 
     # Handle menu selection
     writer = SequenceWriter(
         env,
-        video=hou.getenv("MPLAY_BATCH_OUTPUT") == "video",
+        video=export_video,
         keep_video_source=keep_source
     )
     try:
