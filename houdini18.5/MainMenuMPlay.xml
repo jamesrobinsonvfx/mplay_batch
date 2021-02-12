@@ -4,7 +4,11 @@
         <subMenu id="mplay_batch">
             <label>Batch</label>
             <titleItem><label>Output</label></titleItem>
-            <scriptMenuStripRadio>
+            <scriptToggleItem id="output_video">
+                <label>Export Video</label>
+                <variableName>MPLAY_BATCH_OUTPUT_VIDEO</variableName>
+            </scriptToggleItem>
+            <!-- <scriptMenuStripRadio>
                 <variableName>MPLAY_BATCH_OUTPUT</variableName>
                 <scriptRadioItem id="output_img_seq">
                     <label>Image Sequence</label>
@@ -14,7 +18,7 @@
                     <label>Video</label>
                     <variableValue>video</variableValue>
                 </scriptRadioItem>
-            </scriptMenuStripRadio>
+            </scriptMenuStripRadio> -->
             <scriptToggleItem id="keep_video_source">
                 <label>Keep Image Sequence (Video)</label>
                 <variableName>MPLAY_BATCH_KEEP_VIDEO_SOURCE</variableName>
