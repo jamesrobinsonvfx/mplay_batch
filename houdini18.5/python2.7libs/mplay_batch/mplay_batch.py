@@ -135,7 +135,7 @@ class Environment(object):
     @video_format.setter
     def video_format(self, extension):
         format_ = re.sub(r"(\.?)(\w*\d*\.*)", r"\2", extension)
-        if format_ in self.valid_formats:
+        if format_ in self.valid_video_formats:
             self._video_format = format_
         else:
             raise UnsupportedVideoFormatError(format_)
