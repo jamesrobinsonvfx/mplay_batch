@@ -216,6 +216,19 @@ class Environment(object):
             value = 0
         return value
 
+    @staticmethod
+    def find_ffmpeg():
+        """Locate the ffmpeg executable on disk.
+
+        :raises MissingFFmpegError: Can't find ffmpeg
+        :return: Path to ffmpeg executable
+        :rtype: str
+        """
+        ffmpeg_path = find_executable("ffmpeg")
+        if not ffmpeg_path:
+            raise MissingFFmpegError
+        return ffmpeg_path
+
 
 class SequenceDir(object):
     """A place to write sequences into."""
@@ -410,8 +423,7 @@ class SequenceWriter(object):
         self.cmds = {"hscript": [], "ffmpeg": []}
         self.seqs = []
         if self.video:
-            if not find_executable("ffmpeg"):
-                raise MissingFFmpegError
+            self.env.find_ffmpeg()
 
     def execute(self):
         """Run through command queue."""
@@ -531,10 +543,8 @@ def main(kwargs):
 
     # Check video options
     # TODO: Revert back to Radio Button style when RFE is fixed.
-    keep_source = Environment.check_toggle_variable(
-        "MPLAY_BATCH_KEEP_VIDEO_SOURCE")
-    export_video = Environment.check_toggle_variable(
-        "MPLAY_BATCH_OUTPUT_VIDEO")
+    keep_source = env.check_toggle_variable("MPLAY_BATCH_KEEP_VIDEO_SOURCE")
+    export_video = env.check_toggle_variable("MPLAY_BATCH_OUTPUT_VIDEO")
 
     # Handle menu selection
     writer = SequenceWriter(
