@@ -13,7 +13,7 @@ import hou
 
 
 class EnvironmentVariableTypeError(TypeError):
-    """Exception for bad environment variable types."""
+    """Error for bad environment variable types."""
 
     def __init__(self, var_name, correct_type_name):
         self.message = (
@@ -26,7 +26,7 @@ class EnvironmentVariableTypeError(TypeError):
 
 
 class EnvironmentVariableValueError(ValueError):
-    """Exception for bad environment variable values."""
+    """Error for bad environment variable values."""
 
     def __init__(self, var_name):
         self.message = "{{{0}}} : Value out of range".format(var_name)
@@ -38,7 +38,7 @@ class EnvironmentVariableValueError(ValueError):
 
 
 class MissingFFmpegError(EnvironmentError):
-    """Exception for missing ffmpeg executable"""
+    """Error for missing ffmpeg executable"""
 
     def __str__(self):
         return (
@@ -48,8 +48,31 @@ class MissingFFmpegError(EnvironmentError):
         )
 
 
+class UnsupportedVideoFormatError(ValueError):
+    """Error for an invalid video type."""
+
+    def __init__(self, video_format):
+        self.message = (
+            "\"{0}\" is not currently supported by MPlay Batch. "
+            "Supported formats include:\n{1}".format(
+                video_format,
+                "\n".join(Environment.valid_video_formats)
+            )
+        )
+        super(UnsupportedVideoFormatError, self).__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
 class Environment(object):
     """Object to initialize and store information about the session."""
+
+    # Can add more as they come up. Just a starting point.
+    valid_video_formats = ["mp4", "mov"]
+    if "win32" in sys.platform:
+        win_formats = ["avi"]
+        valid_video_formats.extend(win_formats)
 
     def __init__(
             self,
@@ -111,12 +134,11 @@ class Environment(object):
 
     @video_format.setter
     def video_format(self, extension):
-        valid_formats = ["mp4", "mov"]
-        if "win32" in sys.platform:
-            valid_formats.append("avi")
         format_ = re.sub(r"(\.?)(\w*\d*\.*)", r"\2", extension)
-        if format_ in valid_formats:
+        if format_ in self.valid_formats:
             self._video_format = format_
+        else:
+            raise UnsupportedVideoFormatError(format_)
 
     @property
     def flipbook_dir(self):
@@ -175,6 +197,22 @@ class Environment(object):
         if padding < 0:
             raise EnvironmentVariableValueError(var_name)
         return padding
+
+    @staticmethod
+    def check_toggle_variable(var):
+        """Check the state of menu toggle's variable.
+
+        :param var: Variable to check
+        :type var: str
+        :return: Variable value. -1 if any undefined input
+        :rtype: int
+        """
+        value = -1
+        try:
+            value = int(hou.getenv(var))
+        except (ValueError, TypeError):
+            value = 0
+        return value
 
 
 class SequenceDir(object):
@@ -473,22 +511,6 @@ def open_flipbook_dir(env):
         os.system("gio open {0}".format(env.flipbook_dir))
 
 
-def check_toggle_variable(var):
-    """Check the state of menu toggle's variable.
-
-    :param var: Variable to check
-    :type var: str
-    :return: Variable value. -1 if any undefined input
-    :rtype: int
-    """
-    value = -1
-    try:
-        value = int(hou.getenv(var))
-    except (ValueError, TypeError):
-        value = 0
-    return value
-
-
 def main(kwargs):
     """Entry point for the MPlay Batch program.
 
@@ -507,8 +529,10 @@ def main(kwargs):
 
     # Check video options
     # TODO: Revert back to Radio Button style when RFE is fixed.
-    keep_source = check_toggle_variable("MPLAY_BATCH_KEEP_VIDEO_SOURCE")
-    export_video = check_toggle_variable("MPLAY_BATCH_OUTPUT_VIDEO")
+    keep_source = Environment.check_toggle_variable(
+        "MPLAY_BATCH_KEEP_VIDEO_SOURCE")
+    export_video = Environment.check_toggle_variable(
+        "MPLAY_BATCH_OUTPUT_VIDEO")
 
     # Handle menu selection
     writer = SequenceWriter(
