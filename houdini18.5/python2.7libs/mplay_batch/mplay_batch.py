@@ -134,7 +134,7 @@ class Environment(object):
         dir_ = hou.expandString(dir_)
         if not os.path.exists(dir_):
             raise OSError("Flipbook directory {0} does not exist".format(dir_))
-        elif not os.path.isdir(dir_):
+        if not os.path.isdir(dir_):
             raise ValueError("{0} is not a directory".format(dir_))
         self._flipbook_dir = dir_
 
