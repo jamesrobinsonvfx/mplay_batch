@@ -7,6 +7,7 @@
             <scriptToggleItem id="output_video">
                 <label>Export Video</label>
                 <variableName>MPLAY_BATCH_OUTPUT_VIDEO</variableName>
+                <scriptCode><![CDATA[import mplay_batch;mplay_batch.Environment.find_ffmpeg();hou.hscript('if ($MPLAY_BATCH_OUTPUT_VIDEO) then;set -g MPLAY_BATCH_OUTPUT_VIDEO = 0;else;set -g MPLAY_BATCH_OUTPUT_VIDEO = 1;endif;');hou.hscript('varchange MPLAY_BATCH_OUTPUT_VIDEO')]]></scriptCode>
             </scriptToggleItem>
             <!-- <scriptMenuStripRadio>
                 <variableName>MPLAY_BATCH_OUTPUT</variableName>
