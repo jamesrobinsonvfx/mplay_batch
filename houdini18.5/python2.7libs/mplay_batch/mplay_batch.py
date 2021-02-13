@@ -131,7 +131,7 @@ class Environment(object):
     @video_format.setter
     def video_format(self, extension):
         format_ = re.sub(r"(\.?)(\w*\d*\.*)", r"\2", extension)
-        if not self.find_ffmpeg():
+        if not self.find_ffmpeg(silent=True):
             # Just set it anyway and do an early return.
             self._video_format = format_
             return
@@ -215,7 +215,7 @@ class Environment(object):
         return value
 
     @staticmethod
-    def find_ffmpeg():
+    def find_ffmpeg(silent=False):
         """Locate the ffmpeg executable on disk.
 
         :raises MissingFFmpegError: Can't find ffmpeg
@@ -223,7 +223,7 @@ class Environment(object):
         :rtype: str
         """
         ffmpeg_path = find_executable("ffmpeg")
-        if not ffmpeg_path:
+        if not ffmpeg_path and not silent:
             raise MissingFFmpegError
         return ffmpeg_path
 
