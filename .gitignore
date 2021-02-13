@@ -7,3 +7,5 @@ vendor
 venv/
 .vscode
 houdini18.5/
+
+*.DS_Store
