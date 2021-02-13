@@ -235,21 +235,23 @@ Here are some examples you can add to the `env` key in the package file:
 ```json
 {
 ...
-},
-{
-	"MPLAY_BATCH_FLIPBOOK_DIR": "__JOB__/renders/flipbook"
-},
-{
-	"MPLAY_BATCH_EXTENSION": "png"
-},
-{
-	"MPLAY_BATCH_PAD_SEQ_INDEX": "2"
-},
-{
-	"MPLAY_BATCH_PAD_SUB_VERSION": "4"
-},
-{
-	"MPLAY_BATCH_VIDEO_FORMAT": "mov"
+	},
+	{
+		"MPLAY_BATCH_FLIPBOOK_DIR": "__JOB__/renders/flipbook"
+	},
+	{
+		"MPLAY_BATCH_EXTENSION": "png"
+	},
+	{
+		"MPLAY_BATCH_PAD_SEQ_INDEX": "2"
+	},
+	{
+		"MPLAY_BATCH_PAD_SUB_VERSION": "4"
+	},
+	{
+		"MPLAY_BATCH_VIDEO_FORMAT": "mov"
+	}
+...
 }
 ```
 
