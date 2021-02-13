@@ -32,6 +32,7 @@ And you're all set!
 	- [Example: Naming](#example-naming)
 - [Installation](#installation)
 	- [Custom Installation Location](#custom-installation-location)
+	- [Installing to an `$HSITE` Demo](#installing-to-an-hsite-demo)
 - [Customization](#customization)
 	- [Defaults](#defaults)
 	- [Custom Variables, `$JOB`, `$HIP`, etc.](#custom-variables-job-hip-etc)
@@ -133,26 +134,43 @@ You can copy this entire folder to anywhere that packages are scanned for. Easie
 
 If you'd like to keep this package somewhere else, simply modify the `MPLAY_BATCH_INSTALL_DIR` key to something else, ie `"$HOME/dev/mplay_batch"` or `"C:/Users/James/houdini_tools/mplay_batch"`. Just make sure that the `mplay_batch.json` file lives in a `packages` folder that Houdini will scan.
 
-If you're having any issues with setting up in an `$HSITE`, see [this
-post](https://www.sidefx.com/forum/topic/77777/). For more info about `$HSITE`,
-see [the docs](https://www.sidefx.com/docs/houdini/basics/config.html#locations)
+If you're having any issues with setting up in an `$HSITE`, you can try checking out [this
+post on the SideFX Forums](https://www.sidefx.com/forum/topic/77777/).
 
+## Installing to an `$HSITE` Demo
 As an example, a here is a demo of how I have set it up using my own `$HSITE` at
 home:
 
 *I do not claim that this is the only way, or even the best way. But it is **a** way.*
 
+For more info on `$HSITE`, see [the docs](https://www.sidefx.com/docs/houdini/basics/config.html#locations).
+
 1. `$HSITE` is set in my environment to `$HOME/dev/hsite`
+
+   ![HSITE variable on Windows](assets/images/hsite_env_windows.png)
+
 2. Inside the `$HSITE`, there are folders for each Houdini Major.Minor version,
    as well as an **external** folder and a **packages** folder.
 
+   ![Personal HSITE](assets/images/hsite_directories.png)
+
    **external** serves as a location to dump any and all 3rd party plugins.
+
+   ![HSITE/external](assets/images/hsite_external.png)
 
    **packages** contains packages that load the plugins according to the Houdini
    version that was launched.
+
+   ![HSITE/packages](assets/images/hsite_packages.png)
+
+
 3. Inside of each `$HSITE/houdiniMajor.Minor` folder, there is a **packages**
    directory with a very simple package called `packages.json` (it can be called
-   whatever you want). The package just contains:
+   whatever you want).
+
+   ![Inside HoudiniMajor.Minor](assets/images/hsite_majorminor_simple_package.png)
+
+   The package just contains:
 
    ```
    {
@@ -160,13 +178,24 @@ home:
    }
    ```
    `package_path` is a special keyword that allows you to dynamically add other
-   paths in which Houdini can scan for packages.
+   paths in which Houdini can scan for packages. If you prefer to set this at the system/environment level, you can also check out the `HOUDINI_PACKAGE_DIR` variable.
+
 4. `$HSITE/packages` contains the `mplay_batch.json` package. The only
    modifcation is that the `MPLAY_BATCH_INSTALL_DIR` key is now
    `$HSITE/external/mplay_batch`.
 
    By default, the package uses the `houdini_version` keyword to ensure the correct version
    of the tool is loaded for whatever version of Houdini was launched.
+
+   ```
+   {
+    "path": "$MPLAY_BATCH_BUILD_VERSION_DIR",
+    "env": [
+        {
+            "MPLAY_BATCH_INSTALL_DIR": "$HSITE/external/mplay_batch"
+        },
+	...
+	```
 
 [Back to top](#overview)
 
