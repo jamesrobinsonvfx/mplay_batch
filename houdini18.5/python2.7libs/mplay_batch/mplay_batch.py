@@ -58,7 +58,7 @@ class UnsupportedVideoFormatError(ValueError):
             "Check the value set for MPLAY_BATCH_VIDEO_FORMAT "
             "in mplay_batch.json".format(
                 video_format,
-                "\n\t".join(Environment.valid_video_formats)
+                "\n\t".join(Environment.ffmpeg_available_formats())
             )
         )
         super(UnsupportedVideoFormatError, self).__init__(self.message)
@@ -69,12 +69,6 @@ class UnsupportedVideoFormatError(ValueError):
 
 class Environment(object):
     """Object to initialize and store information about the session."""
-
-    # Can add more as they come up. Just a starting point.
-    valid_video_formats = ["mp4", "mov"]
-    if "win32" in sys.platform:
-        win_formats = ["avi"]
-        valid_video_formats.extend(win_formats)
 
     def __init__(
             self,
@@ -137,7 +131,11 @@ class Environment(object):
     @video_format.setter
     def video_format(self, extension):
         format_ = re.sub(r"(\.?)(\w*\d*\.*)", r"\2", extension)
-        if format_ in self.valid_video_formats:
+        if not self.find_ffmpeg():
+            # Just set it anyway and do an early return.
+            self._video_format = format_
+            return
+        if format_ in self.ffmpeg_available_formats():
             self._video_format = format_
         else:
             raise UnsupportedVideoFormatError(format_)
@@ -228,6 +226,24 @@ class Environment(object):
         if not ffmpeg_path:
             raise MissingFFmpegError
         return ffmpeg_path
+
+    @staticmethod
+    def ffmpeg_available_formats():
+        """Get a list of available ffmpeg formats on this machine.
+
+        :return: List of formats
+        :rtype: list of str
+        """
+        out = subprocess.check_output(
+            shlex.split("ffmpeg -hide_banner -loglevel error -formats")
+        )
+        regex = re.compile(r"\s*(\w*)\s+(\w+)\s+(\w*)")
+        formats = []
+        for line in out.split("--")[1].split("\r\n"):
+            match = regex.match(line)
+            if match:
+                formats.append(match.group(2))
+        return formats
 
 
 class SequenceDir(object):
@@ -384,6 +400,18 @@ class Sequence(object):
         )
 
     @property
+    def ffmpeg_pattern(self):
+        """Path to this sequence with an ffmpeg-style pattern.
+
+        :return: ffmpeg "sequence" pattern type
+        :rtype: str
+        """
+        return "{0}/{1}".format(
+            self.seq_dir.dirname,
+            self._format_basename(frame_symbol=r"%d")
+        )
+
+    @property
     def video_path(self):
         """Path to the video component of this sequence.
 
@@ -497,16 +525,11 @@ class SequenceWriter(object):
         :return: Shlex-formatted command list
         :rtype: list
         """
-        # Fix for windows being windows...
-        pattern_type = "glob"
-        pattern = seq.glob_pattern
-        if "win32" in sys.platform:
-            pattern_type = "sequence"
-            pattern = pattern.replace("[0-9]*", "%d")
         ffmpeg_cmd = (
-            "ffmpeg -nostdin -framerate {0} -pix_fmt yuv420p -pattern_type {1}"
-            " -i \"{2}\" \"{3}\" -c:v libx264 -movflags faststart ".format(
-                env.fps, pattern_type, pattern, seq.video_path)
+            "ffmpeg -nostdin -hide_banner -loglevel error -framerate {0} "
+            "-pix_fmt yuv420p -pattern_type sequence -i \"{1}\" \"{2}\" "
+            "-c:v libx264 -movflags faststart ".format(
+                env.fps, seq.ffmpeg_pattern, seq.video_path)
         )
         return shlex.split(ffmpeg_cmd)
 
