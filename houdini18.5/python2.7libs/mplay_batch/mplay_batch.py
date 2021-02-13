@@ -239,7 +239,7 @@ class Environment(object):
         )
         regex = re.compile(r"\s*(\w*)\s+(\w+)\s+(\w*)")
         formats = []
-        for line in out.split("--")[1].split("\r\n"):
+        for line in out.split("--")[1].split("\n"):
             match = regex.match(line)
             if match:
                 formats.append(match.group(2))
