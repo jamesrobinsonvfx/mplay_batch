@@ -45,7 +45,7 @@ Icon](assets/images/filmstrip_icon.png) instead of hitting <kbd>esc</kbd> or the
 little red x, MPlay will start writing a new sequence to memory, while keeping
 the previous one available for viewing and comparison.
 
-![Sequence List Only Demo](assets/images/sequence_list_only.gif)
+![Sequence List Only Demo](assets/images/sequence_list_only.webm)
 
 However, if you want to save the sequences out, it can be a little tedious doing
 them one by one! That's where __MPlay Batch__ comes in.
