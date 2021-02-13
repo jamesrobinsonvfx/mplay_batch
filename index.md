@@ -76,6 +76,11 @@ Saves all loaded sequences to a directory.
 
 ## Export Video ##
 
+![Export Video](assets/images/export_video.mp4)
+<video width="960" height="540" autoplay loop>
+	<source src="assets/images/export_video.mp4" type="video/mp4">
+</video>
+
 When this option is enabled, a video will be exported for each sequence you
 save instead of an image sequence.
 
