@@ -130,6 +130,7 @@ class Environment(object):
 
     @video_format.setter
     def video_format(self, extension):
+        # TODO: Is it lame that ffmpeg is queried whenever this obj is created?
         format_ = re.sub(r"(\.?)(\w*\d*\.*)", r"\2", extension)
         if not self.find_ffmpeg(silent=True):
             # Just set it anyway and do an early return.
