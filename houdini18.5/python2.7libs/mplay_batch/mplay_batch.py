@@ -51,14 +51,14 @@ class MissingFFmpegError(EnvironmentError):
 class UnsupportedVideoFormatError(ValueError):
     """Error for an invalid video type."""
 
-    def __init__(self, video_format):
+    def __init__(self, video_format, valid_formats):
         self.message = (
             "The \"{0}\" format is not currently supported by MPlay Batch on "
             "this system.\nSupported formats include:\n\t{1}\n"
             "Check the value set for MPLAY_BATCH_VIDEO_FORMAT "
             "in mplay_batch.json".format(
                 video_format,
-                "\n\t".join(Environment.ffmpeg_available_formats())
+                "\n\t".join(valid_formats)
             )
         )
         super(UnsupportedVideoFormatError, self).__init__(self.message)
@@ -135,10 +135,11 @@ class Environment(object):
             # Just set it anyway and do an early return.
             self._video_format = format_
             return
-        if format_ in self.ffmpeg_available_formats():
+        available_formats = self.ffmpeg_available_formats()
+        if format_ in available_formats:
             self._video_format = format_
         else:
-            raise UnsupportedVideoFormatError(format_)
+            raise UnsupportedVideoFormatError(format_, available_formats)
 
     @property
     def flipbook_dir(self):
@@ -227,15 +228,15 @@ class Environment(object):
             raise MissingFFmpegError
         return ffmpeg_path
 
-    @staticmethod
-    def ffmpeg_available_formats():
+    def ffmpeg_available_formats(self):
         """Get a list of available ffmpeg formats on this machine.
 
         :return: List of formats
         :rtype: list of str
         """
         out = subprocess.check_output(
-            shlex.split("ffmpeg -hide_banner -loglevel error -formats")
+            shlex.split("ffmpeg -hide_banner -loglevel error -formats"),
+            **self.subprocess_kwargs()
         )
         regex = re.compile(r"\s*(\w*)\s+(\w+)\s+(\w*)")
         formats = []
@@ -244,6 +245,25 @@ class Environment(object):
             if match:
                 formats.append(match.group(2))
         return formats
+
+    @staticmethod
+    def subprocess_kwargs():
+        """Kwargs for subprocess calls based on the environment.
+
+        Currently just sets startupinfo to hide Windows shell. Can be
+        extended later if more needs arise.
+
+        :return: Common keyword arguments for check_output calls
+        :rtype: dict
+        """
+        kwargs = {}
+        # Hide the popup flashing shell on Windows
+        startupinfo = None
+        if "win32" in sys.platform:
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        kwargs["startupinfo"] = startupinfo
+        return kwargs
 
 
 class SequenceDir(object):
@@ -460,7 +480,10 @@ class SequenceWriter(object):
             hou.hscript(cmd)
         # Create video using ffmpeg
         for cmd in self.cmds["ffmpeg"]:
-            result = subprocess.check_call(cmd)
+            result = subprocess.check_call(
+                cmd,
+                **self.env.subprocess_kwargs()
+            )
             if result != 0:
                 raise hou.Error("Something went wrong")
         # Remove image sequence source when writing a video
