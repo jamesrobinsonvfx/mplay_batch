@@ -8,7 +8,8 @@
                 <label>Export Video</label>
                 <variableName>MPLAY_BATCH_OUTPUT_VIDEO</variableName>
                 <!-- MPlay does not seem to reflect global variables changing on toggleItems like the normal MainMenu does, so "Export Video" will remain checked, however, the video output will be skipped. -->
-                <scriptCode><![CDATA[import mplay_batch;hou.hscript('if ($MPLAY_BATCH_OUTPUT_VIDEO) then;set -g MPLAY_BATCH_OUTPUT_VIDEO = 0;else;set -g MPLAY_BATCH_OUTPUT_VIDEO = 1;endif;') if mplay_batch.Environment.find_ffmpeg() else hou.hscript('set -g MPLAY_BATCH_OUTPUT_VIDEO = 0');hou.hscript('varchange MPLAY_BATCH_OUTPUT_VIDEO')]]></scriptCode>
+                <!--It might be confusing if the user tries to uncheck the box and sees the error again...Leave it out til the RFE is fixed-->
+                <!-- <scriptCode><![CDATA[import mplay_batch;hou.hscript('if ($MPLAY_BATCH_OUTPUT_VIDEO) then;set -g MPLAY_BATCH_OUTPUT_VIDEO = 0;else;set -g MPLAY_BATCH_OUTPUT_VIDEO = 1;endif;') if mplay_batch.Environment.find_ffmpeg() else hou.hscript('set -g MPLAY_BATCH_OUTPUT_VIDEO = 0');hou.hscript('varchange MPLAY_BATCH_OUTPUT_VIDEO')]]></scriptCode> -->
             </scriptToggleItem>
             <!-- <scriptMenuStripRadio>
                 <variableName>MPLAY_BATCH_OUTPUT</variableName>

@@ -42,8 +42,8 @@ class MissingFFmpegError(EnvironmentError):
 
     def __str__(self):
         return (
-            "Missing ffmpeg executable."
-            "Please make sure it is installed and available "
+            "Missing ffmpeg executable. "
+            "To export video, please make sure it is installed and available "
             "on the system's PATH"
         )
 
