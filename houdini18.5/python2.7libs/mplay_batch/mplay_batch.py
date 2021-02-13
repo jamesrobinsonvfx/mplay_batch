@@ -528,16 +528,6 @@ class SequenceWriter(object):
                     self.format_ffmpeg_cmd(seq, self.env))
         return self
 
-    def save_all_viewers(self):
-        """Save all open viewers to disk."""
-        imgviews = hou.hscript("imgviewls")
-        for i, view in enumerate(imgviews):
-            seq = Sequence(self.location, index=i)
-            self.cmds["ffmpeg"].append(
-                "imgsave -a {0} {1}".format(seq.path, view))
-            self.seqs.append(seq)
-        return self
-
     @staticmethod
     def format_ffmpeg_cmd(seq, env):
         """Format a command for ffmpeg to export video
