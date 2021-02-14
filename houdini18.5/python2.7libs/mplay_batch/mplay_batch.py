@@ -104,7 +104,50 @@ class Environment(object):
         except KeyError:
             self.pad_seq_index = pad_seq_index
 
+        # Determine FPS and Frame Range for this session
         self.fps = hou.fps()
+        self._frange = (1, 100)  # Initialize to some value
+        self.frange = self.mplay_frange()
+
+    @staticmethod
+    def mplay_frange():
+        """Get the frame range for the current MPlay session.
+
+        `$FSTART` etc. cannot be trusted here, so we need to parse the
+        string provided by the hscript expression `frange`.
+
+        :return: Frame range for this MPlay session.
+        :rtype: tuple
+        """
+        # Must use hscript in MPlay. Returns a string that needs parsing
+        range_ = hou.hscript("frange")[0]
+        range_ = range_.split("Frame range: ")[1].split(" to ")
+        range_[1] = range_[1].rstrip("\n")
+        range_ = tuple([int(float(x)) for x in range_])
+        return range_
+
+    @property
+    def frange(self):
+        """Frame range for this session.
+
+        :param range_: Frame range to set
+        :type range_: tuple, length 2
+        :raises TypeError: range_ must be an iterable
+        :raises IndexError: range must have a length of 2
+        :raises TypeError: Frames must be either int float
+        """
+        return self._frange
+
+    @frange.setter
+    def frange(self, range_):
+        if not isinstance(range_, (list, tuple)):
+            raise TypeError("Frame Range must be of type list or tuple")
+        if len(range_) != 2:
+            raise IndexError("Must include a start and end frame")
+        for frame in range_:
+            if not isinstance(frame, (int, float)):
+                raise TypeError("Frames must be specified as int or float")
+        self._frange = tuple(range_)
 
     @property
     def ext(self):
@@ -481,6 +524,7 @@ class SequenceWriter(object):
             hou.hscript(cmd)
         # Create video using ffmpeg
         for cmd in self.cmds["ffmpeg"]:
+
             result = subprocess.check_call(
                 cmd,
                 **self.env.subprocess_kwargs()
@@ -541,9 +585,10 @@ class SequenceWriter(object):
         """
         ffmpeg_cmd = (
             "ffmpeg -nostdin -hide_banner -loglevel error -framerate {0} "
-            "-pix_fmt yuv420p -pattern_type sequence -i \"{1}\" \"{2}\" "
+            "-start_number {1} -pix_fmt yuv420p -pattern_type sequence "
+            "-i \"{2}\" \"{3}\" "
             "-c:v libx264 -movflags faststart ".format(
-                env.fps, seq.ffmpeg_pattern, seq.video_path)
+                env.fps, env.frange[0], seq.ffmpeg_pattern, seq.video_path)
         )
         return shlex.split(ffmpeg_cmd)
 
