@@ -39,7 +39,6 @@ And you're all set!
 		- [Example: Use a built-in Houdini Variable](#example-use-a-built-in-houdini-variable)
 		- [Example: Editing the Package File](#example-editing-the-package-file)
 - [Notes](#notes)
-- [Future](#future)
 
 
 MPlay (the built-in tool for reviewing flipbooks) comes with a really useful
@@ -270,13 +269,7 @@ Here are some examples you can add to the `env` key in the package file:
 
 * The entire frame range will be written for each sequence
 
-[Back to top](#overview)
-
-# Future #
-
-* Could make naming more customizable
-* __Save All Viewers__ option if I can figure out why only one viewer is listed when several are open!
-* Verbosity, prints, logging
-* See if adding a PySide dialog works
+* Thanks Max Moseley for always beta testing stuff
 
 [Back to top](#overview)
+
