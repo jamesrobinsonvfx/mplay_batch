@@ -12,7 +12,7 @@ from distutils.spawn import find_executable
 import hou
 
 
-class EnvironmentVariableTypeError(TypeError):
+class EnvironmentVariableTypeError(Exception):
     """Error for bad environment variable types."""
 
     def __init__(self, var_name, correct_type_name):
@@ -25,7 +25,7 @@ class EnvironmentVariableTypeError(TypeError):
         return self.message
 
 
-class EnvironmentVariableValueError(ValueError):
+class EnvironmentVariableValueError(Exception):
     """Error for bad environment variable values."""
 
     def __init__(self, var_name):
@@ -37,8 +37,8 @@ class EnvironmentVariableValueError(ValueError):
         return self.message
 
 
-class MissingFFmpegError(EnvironmentError):
-    """Error for missing ffmpeg executable"""
+class MissingFFmpegError(Exception):
+    """Error for missing ffmpeg executable."""
 
     def __str__(self):
         return (
@@ -48,7 +48,22 @@ class MissingFFmpegError(EnvironmentError):
         )
 
 
-class UnsupportedVideoFormatError(ValueError):
+class FFmpegFailedError(Exception):
+    """Error for when ffmpeg fails to write a video."""
+
+    def __init__(self, seq_pattern, error):
+        self.message = "Failed to write video for {0}\n".format(seq_pattern)
+        if isinstance(error, subprocess.CalledProcessError):
+            self.message = "{0}\nCommand: {1}\nReturn Code: {2}\n".format(
+                self.message, error.cmd, error.returncode
+            )
+        super(FFmpegFailedError, self).__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
+class UnsupportedVideoFormatError(Exception):
     """Error for an invalid video type."""
 
     def __init__(self, video_format, valid_formats):
@@ -104,10 +119,7 @@ class Environment(object):
         except KeyError:
             self.pad_seq_index = pad_seq_index
 
-        # Determine FPS and Frame Range for this session
         self.fps = hou.fps()
-        self._frange = (1, 100)  # Initialize to some value
-        self.frange = self.mplay_frange()
 
     @staticmethod
     def mplay_frange():
@@ -115,6 +127,17 @@ class Environment(object):
 
         `$FSTART` etc. cannot be trusted here, so we need to parse the
         string provided by the hscript expression `frange`.
+
+        Warning: This is not guaranteed to be correct for each sequence!
+        If the user appends a new sequence with a different range, MPlay
+        will update the range to be the lower start, and the higher end.
+
+        Before running ffmpeg, we must check the files on disk. There is
+        no way to query the sequence range using HScript in MPlay alone.
+
+        As of now, this function only serves for conveniently setting
+        some good defaults on the :class:`Sequence` objects. It may be
+        removed in a future release.
 
         :return: Frame range for this MPlay session.
         :rtype: tuple
@@ -125,29 +148,6 @@ class Environment(object):
         range_[1] = range_[1].rstrip("\n")
         range_ = tuple([int(float(x)) for x in range_])
         return range_
-
-    @property
-    def frange(self):
-        """Frame range for this session.
-
-        :param range_: Frame range to set
-        :type range_: tuple, length 2
-        :raises TypeError: range_ must be an iterable
-        :raises IndexError: range must have a length of 2
-        :raises TypeError: Frames must be either int float
-        """
-        return self._frange
-
-    @frange.setter
-    def frange(self, range_):
-        if not isinstance(range_, (list, tuple)):
-            raise TypeError("Frame Range must be of type list or tuple")
-        if len(range_) != 2:
-            raise IndexError("Must include a start and end frame")
-        for frame in range_:
-            if not isinstance(frame, (int, float)):
-                raise TypeError("Frames must be specified as int or float")
-        self._frange = tuple(range_)
 
     @property
     def ext(self):
@@ -409,6 +409,10 @@ class Sequence(object):
         self.seq_dir = seq_dir
         self.index = index
 
+        # Initialize Frame Range to the MPlay session's range for now
+        # Will be overwritten with what's on disk before writing video
+        self._frange = self.seq_dir.env.mplay_frange()
+
     @property
     def seq_dir(self):
         """Sequence location to write to.
@@ -439,6 +443,57 @@ class Sequence(object):
     def index(self, idx):
         self._index = idx
         self._basename = self._format_basename()
+
+    @property
+    def frange(self):
+        """Frame range for this sequence.
+
+        :param range_: Frame range to set
+        :type range_: tuple, length 2
+        :raises TypeError: range_ must be an iterable
+        :raises IndexError: range must have a length of 2
+        :raises TypeError: Frames must be either int float
+        """
+        return self._frange
+
+    @frange.setter
+    def frange(self, range_):
+        if not isinstance(range_, (list, tuple)):
+            raise TypeError("Frame Range must be of type list or tuple")
+        if len(range_) != 2:
+            raise IndexError("Must include a start and end frame")
+        for frame in range_:
+            if not isinstance(frame, (int, float)):
+                raise TypeError("Frames must be specified as int or float")
+        self._frange = tuple(range_)
+
+    def frange_from_files(self):
+        """Get the actual frame range when files exist on disk.
+
+        :raises IndexError: No frame number found in the file path
+        :raises TypeError: Frame number is an invalid type
+        :return: Frame Range on disk
+        :rtype: tuple, size 2
+        """
+        files = self.files()
+        if len(files) < 2:
+            # self._frange = (0, 0)
+            return None
+        frange = []
+        for file_ in (files[0], files[-1]):
+            try:
+                frame_number = re.findall(
+                    self._format_basename(frame_symbol=r"(\d+)"),
+                    os.path.basename(file_)
+                )[0]
+                frange.append(int(frame_number))
+            except IndexError:
+                raise IndexError("No frame number found")
+            except TypeError:
+                raise TypeError("Invalid frame number in file path")
+        frange = tuple(frange)
+        self._frange = frange
+        return frange
 
     @property
     def basename(self):
@@ -490,6 +545,23 @@ class Sequence(object):
             self.seq_dir.env.video_format
         )
 
+    def files(self):
+        """Get a sorted list of files on disk for this sequence.
+
+        :return: Naturally sorted list of files
+        :rtype: list
+        """
+        files_ = glob.glob(self.glob_pattern)
+        if not files_:
+            return None
+        files_.sort(
+            key=lambda name: [
+                int(text) if text.isdigit() else text.lower()
+                for text in re.split(r"(\d+)", name)
+            ]
+        )
+        return files_
+
     def _format_basename(self, frame_symbol=r"\$\F"):
         """Format an HScript friendly basename for this sequence."""
         return r"{0}_{1}_{2}.{3}.{4}".format(
@@ -504,6 +576,14 @@ class Sequence(object):
         return "Sequence: {0} at {1}".format(self.seq_dir.name, self.path)
 
 
+class SequenceWriterJob(object):
+    """Single job for SequenceWriter to process."""
+
+    def __init__(self, seq, hscript_cmd):
+        self.seq = seq
+        self.hscript_cmd = hscript_cmd
+
+
 class SequenceWriter(object):
     """Handles writing sequences from MPlay."""
 
@@ -512,29 +592,30 @@ class SequenceWriter(object):
         self.video = video
         self.keep_video_source = keep_video_source
         self.location = SequenceDir(hou.hipFile.basename(), env)
-        self.cmds = {"hscript": [], "ffmpeg": []}
-        self.seqs = []
+        self.queue = []
+        # Make sure ffmpeg is accessible
         if self.video:
             self.env.find_ffmpeg()
 
     def execute(self):
         """Run through command queue."""
-        # Write image sequence to disk
-        for cmd in self.cmds["hscript"]:
-            hou.hscript(cmd)
-        # Create video using ffmpeg
-        for cmd in self.cmds["ffmpeg"]:
+        for job in self.queue:
+            # Write image sequence to disk
+            hou.hscript(job.hscript_cmd)
 
-            result = subprocess.check_call(
-                cmd,
-                **self.env.subprocess_kwargs()
-            )
-            if result != 0:
-                raise hou.Error("Something went wrong")
-        # Remove image sequence source when writing a video
-        if self.video and not self.keep_video_source:
-            for seq in self.seqs:
-                self.remove_image_sequence(seq)
+            if self.video:
+                # Update sequence to actual frame range that was written
+                job.seq.frange_from_files()
+                # Write the video
+                try:
+                    subprocess.check_call(
+                        self.format_ffmpeg_cmd(job.seq, self.env),
+                        **self.env.subprocess_kwargs()
+                    )
+                except subprocess.CalledProcessError as err:
+                    raise FFmpegFailedError(job.seq.glob_pattern, err)
+                if not self.keep_video_source:
+                    self.remove_image_sequence(job.seq)
 
     @staticmethod
     def remove_image_sequence(seq):
@@ -552,11 +633,10 @@ class SequenceWriter(object):
 
     def save_current(self):
         """Save the currently selected sequence to disk."""
+        # When doing "Current", there is no way to query MPlay for seq name
         seq = Sequence(self.location)
-        self.cmds["hscript"].append("imgsave -a {0}".format(seq.path))
-        self.seqs.append(seq)
-        if self.video:
-            self.cmds["ffmpeg"].append(self.format_ffmpeg_cmd(seq, self.env))
+        job = SequenceWriterJob(seq, "imgsave -a {0}".format(seq.path))
+        self.queue.append(job)
         return self
 
     def save_all_seqs(self):
@@ -564,12 +644,11 @@ class SequenceWriter(object):
         seqls = hou.hscript("seqls")[0].split("\n")[:-1]
         for i, seq_name in enumerate(seqls):
             seq = Sequence(self.location, index=i)
-            self.cmds["hscript"].append(
-                "imgsave -s {0} -a {1}".format(seq_name, seq.path))
-            self.seqs.append(seq)
-            if self.video:
-                self.cmds["ffmpeg"].append(
-                    self.format_ffmpeg_cmd(seq, self.env))
+            job = SequenceWriterJob(
+                seq,
+                "imgsave -s {0} -a {1}".format(seq_name, seq.path)
+            )
+            self.queue.append(job)
         return self
 
     @staticmethod
@@ -583,12 +662,13 @@ class SequenceWriter(object):
         :return: Shlex-formatted command list
         :rtype: list
         """
+        # Could move this to be an attribute of the Sequence class...
         ffmpeg_cmd = (
             "ffmpeg -nostdin -hide_banner -loglevel error -framerate {0} "
             "-start_number {1} -pix_fmt yuv420p -pattern_type sequence "
             "-i \"{2}\" \"{3}\" "
             "-c:v libx264 -movflags faststart ".format(
-                env.fps, env.frange[0], seq.ffmpeg_pattern, seq.video_path)
+                env.fps, seq.frange[0], seq.ffmpeg_pattern, seq.video_path)
         )
         return shlex.split(ffmpeg_cmd)
 
