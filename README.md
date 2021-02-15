@@ -12,7 +12,7 @@ For more info, see the [MPlay Batch GitHub Page](https://jamesrobinsonvfx.github
 3. Copy `mplay_batch/mplay_batch.json` to the same `packages` directory (again, probably `$HOUDINI_USER_PREF_DIR/packages`)
 
 ### Option 2: Download Zip
-1. Download the latest [.zip](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest/download/mplay_batch.zip) or [.tar.gz](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest/download/mplay_batch.tar.gz) from the [Releases Page](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest)
+1. Download the latest [.zip](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest/download/mplay_batch.zip) from the [Releases Page](https://github.com/jamesrobinsonvfx/mplay_batch/releases/latest)
 2. Extract the contents to `$HOUDINI_USER_PREF_DIR/packages/mplay_batch`
 3. Copy `mplay_batch/mplay_batch.json` to `$HOUDINI_USER_PREF_DIR/packages`
 
@@ -26,12 +26,13 @@ There are a few parameters that can be customized via environment variables. The
 
 | Environment Variable       | Default   | Description                                      |
 |----------------------------|-----------|--------------------------------------------------|
-|MPLAY_BATCH_FLIPBOOK_DIR    |`$JOB/flip`| Where sequences get saved<sup>1</sup>
-|MPLAY_BATCH_EXTENSION       |`jpg`      | Image type to save
-|MPLAY_BATCH_PAD_SUB_VERSION |`3`        | Zero Padding to add to the "Sub-version" suffix
-|MPLAY_BATCH_PAD_SEQ_INDEX   |`0`        | Zero Padding to add to each sequence's suffix
+|MPLAY_BATCH_FLIPBOOK_DIR    |`$JOB/flip`| Where sequences get saved<sup>1</sup>            |
+|MPLAY_BATCH_EXTENSION       |`jpg`      | Image type to save                               |
+|MPLAY_BATCH_PAD_SUB_VERSION |`3`        | Zero Padding to add to the "Sub-version" suffix  |
+|MPLAY_BATCH_PAD_SEQ_INDEX   |`0`        | Zero Padding to add to each sequence's suffix    |
+|MPLAY_BATCH_VIDEO_FORMAT    |`mp4`      | Video format when `Export Video` is enabled      |
 
-<sup>1</sup> *This directory __must__ exist. It will not be created automatically!*
+<sup>1</sup> *This directory __must__ exist. It will not be created automatically!*         
 
 ## Custom Variables, $JOB, $HIP, etc.
 To use custom variables in the file pattern for `MPLAY_BATCH_FLIPBOOK_DIR`, just wrap it in `__` instead of using `$`.
