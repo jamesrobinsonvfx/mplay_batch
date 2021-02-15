@@ -65,13 +65,13 @@ List here](https://www.sidefx.com/docs/houdini/mplay/mplay_sequence_dialog.html)
 
 Saves the currently selected sequence to a directory.
 
-![Save Current Sequence](assets/images/save_current_repeat.gif)
+![Save Current Sequence](assets/images/save_current_repeat.mp4)
 
 ## Save All Sequences ##
 
 Saves all loaded sequences to a directory.
 
-![Save All Sequences](assets/images/save_all.gif)
+![Save All Sequences](assets/images/save_all.mp4)
 
 ## Export Video ##
 
@@ -102,7 +102,7 @@ will be exported, even if the option is toggled on.
 
 Launches the system's file browser and navigates to the base flipbook directory (as set by `MPLAY_BATCH_FLIPBOOK_DIR`)
 
-![Open Flipbook Directory](assets/images/open_flipbook_dir.gif)
+![Open Flipbook Directory](assets/images/open_flipbook_dir.mp4)
 
 By default, each sequence is saved like this:
 
