@@ -278,10 +278,10 @@ class Environment(object):
         :return: List of formats
         :rtype: list of str
         """
-        out = subprocess.check_output(
-            shlex.split("ffmpeg -hide_banner -loglevel error -formats"),
-            **self.subprocess_kwargs()
-        )
+        cmd = shlex.split("ffmpeg -hide_banner -loglevel error -formats")
+        if "linux" in sys.platform:
+            cmd.remove("-hide_banner")
+        out = subprocess.check_output(cmd, **self.subprocess_kwargs())
         regex = re.compile(r"\s*(\w*)\s+(\w+)\s+(\w*)")
         formats = []
         for line in out.split("--")[1].split("\n"):
@@ -670,7 +670,11 @@ class SequenceWriter(object):
             "-c:v libx264 -movflags faststart ".format(
                 env.fps, seq.frange[0], seq.ffmpeg_pattern, seq.video_path)
         )
-        return shlex.split(ffmpeg_cmd)
+        cmd = shlex.split(ffmpeg_cmd)
+        # TODO: Not very DRY. If more issues arise, take care of this elsewhere
+        if "linux" in sys.platform:
+            cmd.remove("-hide_banner")
+        return cmd
 
 
 def open_flipbook_dir(env):
