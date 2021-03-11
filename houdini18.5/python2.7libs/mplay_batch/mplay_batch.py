@@ -200,7 +200,12 @@ class Environment(object):
         dir_ = re.sub(r"__(\w+)__", r"$\1", dir_)
         dir_ = hou.expandString(dir_)
         if not os.path.exists(dir_):
-            raise OSError("Flipbook directory {0} does not exist".format(dir_))
+            try:
+                os.makedirs(dir_)
+            except OSError as error:
+                if error.errno != errno.EEXIST:
+                    raise
+        # Verify that it is a directory
         if not os.path.isdir(dir_):
             raise ValueError("{0} is not a directory".format(dir_))
         self._flipbook_dir = dir_
@@ -666,7 +671,8 @@ class SequenceWriter(object):
         ffmpeg_cmd = (
             "ffmpeg -nostdin -hide_banner -loglevel error -framerate {0} "
             "-start_number {1} -pix_fmt yuv420p -pattern_type sequence "
-            "-i \"{2}\" \"{3}\" "
+            "-i \"{2}\" -vf \"crop=trunc(iw/2)*2:trunc(ih/2)*2\" "
+            "\"{3}\" "
             "-c:v libx264 -movflags faststart ".format(
                 env.fps, seq.frange[0], seq.ffmpeg_pattern, seq.video_path)
         )
