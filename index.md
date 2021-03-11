@@ -209,17 +209,15 @@ There are a few parameters that can be customized via environment variables. The
 
 ## Defaults ##
 
-| Environment Variable          | Default     | Description                                     |
-| ----------------------------- | ----------- | ----------------------------------------------- |
-| `MPLAY_BATCH_FLIPBOOK_DIR`    | `$JOB/flip` | Where sequences get saved<sup>1</sup>           |
-| `MPLAY_BATCH_EXTENSION`       | `jpg`       | Image type to save                              |
-| `MPLAY_BATCH_PAD_SUB_VERSION` | `3`         | Zero Padding to add to the "Sub-version" suffix |
-| `MPLAY_BATCH_PAD_SEQ_INDEX`   | `0`         | Zero Padding to add to each sequence's suffix   |
-| `MPLAY_BATCH_VIDEO_FORMAT`    | `mp4`       | Format to use with `ffmpeg` when writing videos |
+| Environment Variable          | Default                 | Description                                     |
+| ----------------------------- | ----------------------- | ----------------------------------------------- |
+| `MPLAY_BATCH_FLIPBOOK_DIR`    | `$JOB/flip`<sup>1</sup> | Where sequences get saved                       |
+| `MPLAY_BATCH_EXTENSION`       | `jpg`                   | Image type to save                              |
+| `MPLAY_BATCH_PAD_SUB_VERSION` | `3`                     | Zero Padding to add to the "Sub-version" suffix |
+| `MPLAY_BATCH_PAD_SEQ_INDEX`   | `0`                     | Zero Padding to add to each sequence's suffix   |
+| `MPLAY_BATCH_VIDEO_FORMAT`    | `mp4`                   | Format to use with `ffmpeg` when writing videos |
 
-<sup>1</sup> *This directory __must__ exist. It will not be created
-automatically!* `$JOB/flip` is the default naming when creating a project using
-Houdini's built-in `File > New Project` dialog.
+<sup>1</sup> `$JOB/flip` is the default naming when creating a project using Houdini's built-in `File > New Project` dialog.
 
 ## Custom Variables, `$JOB`, `$HIP`, etc. ##
 
