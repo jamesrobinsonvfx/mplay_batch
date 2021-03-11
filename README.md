@@ -24,15 +24,13 @@ There are a few parameters that can be customized via environment variables. The
 
 ## Defaults:
 
-| Environment Variable       | Default   | Description                                      |
-|----------------------------|-----------|--------------------------------------------------|
-|MPLAY_BATCH_FLIPBOOK_DIR    |`$JOB/flip`| Where sequences get saved<sup>1</sup>            |
-|MPLAY_BATCH_EXTENSION       |`jpg`      | Image type to save                               |
-|MPLAY_BATCH_PAD_SUB_VERSION |`3`        | Zero Padding to add to the "Sub-version" suffix  |
-|MPLAY_BATCH_PAD_SEQ_INDEX   |`0`        | Zero Padding to add to each sequence's suffix    |
-|MPLAY_BATCH_VIDEO_FORMAT    |`mp4`      | Video format when `Export Video` is enabled      |
-
-<sup>1</sup> *This directory __must__ exist. It will not be created automatically!*         
+| Environment Variable        | Default     | Description                                     |
+| --------------------------- | ----------- | ----------------------------------------------- |
+| MPLAY_BATCH_FLIPBOOK_DIR    | `$JOB/flip` | Where sequences get saved                       |
+| MPLAY_BATCH_EXTENSION       | `jpg`       | Image type to save                              |
+| MPLAY_BATCH_PAD_SUB_VERSION | `3`         | Zero Padding to add to the "Sub-version" suffix |
+| MPLAY_BATCH_PAD_SEQ_INDEX   | `0`         | Zero Padding to add to each sequence's suffix   |
+| MPLAY_BATCH_VIDEO_FORMAT    | `mp4`       | Video format when `Export Video` is enabled     |
 
 ## Custom Variables, $JOB, $HIP, etc.
 To use custom variables in the file pattern for `MPLAY_BATCH_FLIPBOOK_DIR`, just wrap it in `__` instead of using `$`.
