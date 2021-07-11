@@ -558,7 +558,7 @@ class Sequence(object):
         """
         files_ = glob.glob(self.glob_pattern)
         if not files_:
-            return None
+            return []
         files_.sort(
             key=lambda name: [
                 int(text) if text.isdigit() else text.lower()
