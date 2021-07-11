@@ -728,7 +728,7 @@ class SequenceWriter(object):
         tfile = tempfile.NamedTemporaryFile(
             prefix="mplay_batch_", suffix=".png")
         palette_cmd = (
-            "ffmpeg -loglevel error -start_number {0} -i {1} "
+            "ffmpeg -nostdin -loglevel error -start_number {0} -i {1} "
             "-vf \"fps={2},palettegen\" -y {3}".format(
                 seq.frange[0], seq.ffmpeg_pattern, env.fps, tfile.name
             )
@@ -736,7 +736,7 @@ class SequenceWriter(object):
         palette_cmd = shlex.split(palette_cmd)
 
         gif_cmd = (
-            "ffmpeg -loglevel error "
+            "ffmpeg -nostdin -loglevel error "
             "-start_number {0} -i {1} -i {2} -lavfi "
             "\"fps={3} [x]; [x][1:v] paletteuse\" -y {4}".format(
                 seq.frange[0],
