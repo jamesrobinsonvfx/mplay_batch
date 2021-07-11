@@ -11,6 +11,10 @@
                 <!--It might be confusing if the user tries to uncheck the box and sees the error again...Leave it out til the RFE is fixed-->
                 <!-- <scriptCode><![CDATA[import mplay_batch;hou.hscript('if ($MPLAY_BATCH_OUTPUT_VIDEO) then;set -g MPLAY_BATCH_OUTPUT_VIDEO = 0;else;set -g MPLAY_BATCH_OUTPUT_VIDEO = 1;endif;') if mplay_batch.Environment.find_ffmpeg() else hou.hscript('set -g MPLAY_BATCH_OUTPUT_VIDEO = 0');hou.hscript('varchange MPLAY_BATCH_OUTPUT_VIDEO')]]></scriptCode> -->
             </scriptToggleItem>
+            <scriptToggleItem id="output_gif">
+                <label>Export GIF</label>
+                <variableName>MPLAY_BATCH_OUTPUT_GIF</variableName>
+            </scriptToggleItem>
             <!-- <scriptMenuStripRadio>
                 <variableName>MPLAY_BATCH_OUTPUT</variableName>
                 <scriptRadioItem id="output_img_seq">
@@ -23,7 +27,7 @@
                 </scriptRadioItem>
             </scriptMenuStripRadio> -->
             <scriptToggleItem id="keep_video_source">
-                <label>Keep Image Sequence (Video)</label>
+                <label>Keep Image Sequence (Video/GIF)</label>
                 <variableName>MPLAY_BATCH_KEEP_VIDEO_SOURCE</variableName>
             </scriptToggleItem>
             <titleItem><label>Save</label></titleItem>

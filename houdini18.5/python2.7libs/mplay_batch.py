@@ -6,6 +6,7 @@ import re
 import shlex
 import subprocess
 import sys
+import tempfile
 
 from distutils.spawn import find_executable
 
@@ -550,6 +551,20 @@ class Sequence(object):
             self.seq_dir.env.video_format
         )
 
+    @property
+    def gif_path(self):
+        """Path to the gif component of this sequence.
+
+        :return: Path to gif
+        :rtype: str
+        """
+        return "{0}/{1}_{2}_{3}.gif".format(
+            self.seq_dir.dirname,
+            self.seq_dir.name,
+            str(self.seq_dir.sub_version),
+            str(self.index).zfill(self.seq_dir.env.pad_seq_index)
+        )
+
     def files(self):
         """Get a sorted list of files on disk for this sequence.
 
@@ -558,7 +573,7 @@ class Sequence(object):
         """
         files_ = glob.glob(self.glob_pattern)
         if not files_:
-            return None
+            return []
         files_.sort(
             key=lambda name: [
                 int(text) if text.isdigit() else text.lower()
@@ -592,14 +607,15 @@ class SequenceWriterJob(object):
 class SequenceWriter(object):
     """Handles writing sequences from MPlay."""
 
-    def __init__(self, env, video=False, keep_video_source=False):
+    def __init__(self, env, video=False, gif=False, keep_video_source=False):
         self.env = env
         self.video = video
+        self.gif = gif
         self.keep_video_source = keep_video_source
         self.location = SequenceDir(hou.hipFile.basename(), env)
         self.queue = []
         # Make sure ffmpeg is accessible
-        if self.video:
+        if self.video or self.gif:
             self.env.find_ffmpeg()
 
     def execute(self):
@@ -619,8 +635,19 @@ class SequenceWriter(object):
                     )
                 except subprocess.CalledProcessError as err:
                     raise FFmpegFailedError(job.seq.glob_pattern, err)
-                if not self.keep_video_source:
-                    self.remove_image_sequence(job.seq)
+
+            if self.gif:
+                # Update sequence to actual written range
+                job.seq.frange_from_files()
+                try:
+                    for cmd in self.format_ffmpeg_cmd_gif(job.seq, self.env):
+                        subprocess.check_call(
+                            cmd, **self.env.subprocess_kwargs())
+                except subprocess.CalledProcessError as err:
+                    raise FFmpegFailedError(job.seq.glob_pattern, err)
+
+            if (self.gif or self.video) and not self.keep_video_source:
+                self.remove_image_sequence(job.seq)
 
     @staticmethod
     def remove_image_sequence(seq):
@@ -658,7 +685,7 @@ class SequenceWriter(object):
 
     @staticmethod
     def format_ffmpeg_cmd(seq, env):
-        """Format a command for ffmpeg to export video
+        """Format a command for ffmpeg to export video.
 
         :param seq: Sequence to render
         :type seq: :class:`Sequence`
@@ -681,6 +708,46 @@ class SequenceWriter(object):
         if "linux" in sys.platform:
             cmd.remove("-hide_banner")
         return cmd
+
+    @staticmethod
+    def format_ffmpeg_cmd_gif(seq, env):
+        """Format a command for ffmpeg to export a GIF.
+
+        This is a 2-part process that requires generating a tempfile
+        for the gif "palette" to make a higher quality gif. The commands
+        should run in the order in which they are stored in the returned
+        tuple.
+
+        :param seq: Sequence to render
+        :type seq: :class:`Sequence`
+        :param env: Current session/env settings
+        :type env: :class:`Environment`
+        :return: 2-tuple of Shlex-formatted command lists
+        :rtype: tuple of list
+        """
+        tfile = tempfile.NamedTemporaryFile(
+            prefix="mplay_batch_", suffix=".png")
+        palette_cmd = (
+            "ffmpeg -loglevel error -start_number {0} -i {1} "
+            "-vf \"fps={2},palettegen\" -y {3}".format(
+                seq.frange[0], seq.ffmpeg_pattern, env.fps, tfile.name
+            )
+        )
+        palette_cmd = shlex.split(palette_cmd)
+
+        gif_cmd = (
+            "ffmpeg -loglevel error "
+            "-start_number {0} -i {1} -i {2} -lavfi "
+            "\"fps={3} [x]; [x][1:v] paletteuse\" -y {4}".format(
+                seq.frange[0],
+                seq.ffmpeg_pattern,
+                tfile.name,
+                env.fps,
+                seq.gif_path
+            )
+        )
+        gif_cmd = shlex.split(gif_cmd)
+        return (palette_cmd, gif_cmd)
 
 
 def open_flipbook_dir(env):
@@ -717,11 +784,13 @@ def main(kwargs):
     # TODO: Revert back to Radio Button style when RFE is fixed.
     keep_source = env.check_toggle_variable("MPLAY_BATCH_KEEP_VIDEO_SOURCE")
     export_video = env.check_toggle_variable("MPLAY_BATCH_OUTPUT_VIDEO")
+    export_gif = env.check_toggle_variable("MPLAY_BATCH_OUTPUT_GIF")
 
     # Handle menu selection
     writer = SequenceWriter(
         env,
         video=export_video,
+        gif=export_gif,
         keep_video_source=keep_source
     )
     try:
