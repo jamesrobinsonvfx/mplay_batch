@@ -289,7 +289,7 @@ class Environment(object):
         out = subprocess.check_output(cmd, **self.subprocess_kwargs())
         regex = re.compile(r"\s*(\w*)\s+(\w+)\s+(\w*)")
         formats = []
-        for line in out.split("--")[1].split("\n"):
+        for line in out.decode("utf-8").split("--")[1].split("\n"):
             match = regex.match(line)
             if match:
                 formats.append(match.group(2))
