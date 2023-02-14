@@ -3,6 +3,8 @@ Menu add-on for MPlay to quickly batch write sequences.
 
 For more info, see the [MPlay Batch GitHub Page](https://jamesrobinsonvfx.github.io/mplay_batch/)
 
+![Menu](https://www.jamesrobinsonvfx.com/mplay_batch/assets/images/menu.png)
+
 ## Quick Installation
 
 ### Option 1: Using Git
